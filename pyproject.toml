@@ -15,6 +15,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    # 離線建置工具：產出繁體優化詞典 config/jieba_dict_traditional.txt
+    # （scripts/build_traditional_dict.py，TICKET-003）。執行期不需要。
+    "opencc-python-reimplemented>=0.1.7",
 ]
 
 [tool.setuptools]
