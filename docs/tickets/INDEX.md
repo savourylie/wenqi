@@ -9,19 +9,19 @@
 
 | Status | Count |
 | --- | --- |
-| ✅ Done | 0 |
+| ✅ Done | 1 |
 | 🔧 In Progress | 0 |
-| 📋 Pending | 1 |
-| 🚫 Blocked | 14 |
+| 📋 Pending | 2 |
+| 🚫 Blocked | 12 |
 | ⏸️ Deferred | 0 |
 
 ## Phase 1 — 基礎建設與 L0/L5（Milestone 1）
 
 | # | Ticket | Status | Depends On | Notes |
 | --- | --- | --- | --- | --- |
-| 001 | [專案骨架與內建詞庫](./001-project-scaffold-and-default-lexicons.md) | `pending` | — | |
-| 002 | [非侵入式狀態管理與 Content Hash 對齊](./002-state-manager-persistence.md) | `blocked` | #001 | |
-| 003 | [TokenizerAdapter 與 JiebaPosAdapter](./003-tokenizer-adapter.md) | `blocked` | #001 | |
+| 001 | [專案骨架與內建詞庫](./001-project-scaffold-and-default-lexicons.md) | `done` | — | 12 tests passed；PR #1 |
+| 002 | [非侵入式狀態管理與 Content Hash 對齊](./002-state-manager-persistence.md) | `pending` | #001 ✅ | |
+| 003 | [TokenizerAdapter 與 JiebaPosAdapter](./003-tokenizer-adapter.md) | `pending` | #001 ✅ | |
 | 004 | [L0 預處理：Markdown 遮罩與的／地／得消歧義](./004-l0-normalizer.md) | `blocked` | #003 | |
 | 005 | [L5 預檢：疑似術語抽取與語體推測](./005-l5-preflight.md) | `blocked` | #002, #003 | |
 | 006 | [Scanner CLI 與 Diagnostic Payload 契約](./006-scanner-cli-payload-contract.md) | `blocked` | #002, #004, #005 | |

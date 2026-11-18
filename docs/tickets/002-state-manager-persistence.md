@@ -1,10 +1,10 @@
 # [TICKET-002] 非侵入式狀態管理與 Content Hash 對齊 (State Manager)
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #001
+- Requires: #001 ✅
 
 ## Description
 實作 `engine/state_manager.py`：所有持久化狀態存放於 `~/.config/wenqi/`，100% 不污染使用者原始文章（不改 Markdown Frontmatter）。支援全域設定、單一 Repo 多篇文章的 workspace 設定、路徑＋內容指紋雙重綁定與改名自動遷移，以及 `--stdin` 隨手貼模式的無狀態運行。這是 L5 白名單寫入與所有 lint 呼叫讀取設定的基礎。

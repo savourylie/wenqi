@@ -1,10 +1,10 @@
 # [TICKET-003] TokenizerAdapter 抽象層與 JiebaPosAdapter (Tokenizer Adapter)
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #001
+- Requires: #001 ✅
 
 ## Description
 實作 `engine/tokenizer_adapter.py`：規格 §5.1A 的分詞器抽象介面與預設實作 `JiebaPosAdapter`。白名單術語必須在分詞階段「絕對冷凍」——不被拆碎、標記 `is_frozen=True`，這是 L5 保護機制在引擎層的落點，也是後續所有 POS-Regex 規則的輸入基礎。
