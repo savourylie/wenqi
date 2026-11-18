@@ -1,7 +1,7 @@
 # [TICKET-003] TokenizerAdapter 抽象層與 JiebaPosAdapter (Tokenizer Adapter)
 
 ## Status
-`pending`
+`done`
 
 ## Dependencies
 - Requires: #001 ✅
@@ -10,12 +10,12 @@
 實作 `engine/tokenizer_adapter.py`：規格 §5.1A 的分詞器抽象介面與預設實作 `JiebaPosAdapter`。白名單術語必須在分詞階段「絕對冷凍」——不被拆碎、標記 `is_frozen=True`，這是 L5 保護機制在引擎層的落點，也是後續所有 POS-Regex 規則的輸入基礎。
 
 ## Acceptance Criteria
-- [ ] `Token` dataclass 欄位與 §5.1A 完全一致：`surface`、`pos`（ICTCLAS/Jieba 兼容標籤）、`start_char`、`end_char`、`is_frozen`、`true_de_role`（預設空字串）。
-- [ ] `TokenizerAdapter` Protocol 定義 `register_whitelist(terms)` 與 `tokenize(text)`。
-- [ ] `JiebaPosAdapter` 以 `jieba.posseg` 實作；`register_whitelist` 對每個詞條呼叫 `jieba.add_word(term, freq=999999, tag=pos)`，分詞結果中白名單詞保持完整且 `is_frozen=True`。
-- [ ] `start_char`／`end_char` 正確對應原句字元索引（含中英夾雜文本），可供後續 span 定位與 `de_normalization_map` 使用。
-- [ ] 冷啟動效能符合 §3.1 目標：初始化＋首次分詞 < 0.1s（不含 jieba 詞典首次載入的快取建立；以合理量測方式驗證並記錄）。
-- [ ] 支援繁體文本：載入繁體優化詞表或等效處理，常見繁體詞不被錯誤切分。
+- [x] `Token` dataclass 欄位與 §5.1A 完全一致：`surface`、`pos`（ICTCLAS/Jieba 兼容標籤）、`start_char`、`end_char`、`is_frozen`、`true_de_role`（預設空字串）。
+- [x] `TokenizerAdapter` Protocol 定義 `register_whitelist(terms)` 與 `tokenize(text)`。
+- [x] `JiebaPosAdapter` 以 `jieba.posseg` 實作；`register_whitelist` 對每個詞條呼叫 `jieba.add_word(term, freq=999999, tag=pos)`，分詞結果中白名單詞保持完整且 `is_frozen=True`。
+- [x] `start_char`／`end_char` 正確對應原句字元索引（含中英夾雜文本），可供後續 span 定位與 `de_normalization_map` 使用。
+- [x] 冷啟動效能符合 §3.1 目標：初始化＋首次分詞 < 0.1s（不含 jieba 詞典首次載入的快取建立；以合理量測方式驗證並記錄）。
+- [x] 支援繁體文本：載入繁體優化詞表或等效處理，常見繁體詞不被錯誤切分。
 
 ## Design Reference
 - `zh_polish_skill_spec_v2.md` §5.1A（介面定義與 JiebaPosAdapter 行為）、§3.1（算力分層與冷啟動目標）。
