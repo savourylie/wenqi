@@ -1,0 +1,38 @@
+{
+  "schema_version": "2.0.0",
+  "weak_verbs": [
+    { "term": "進行", "pos": "v", "note": "萬能弱動詞（文字義肢）：進行研究→詳加研究／深入研究" },
+    { "term": "作出", "pos": "v", "note": "萬能弱動詞：作出貢獻→貢獻很大；作出反應→反應熱烈" },
+    { "term": "加以", "pos": "v", "note": "弱動詞：加以分析→分析" },
+    { "term": "予以", "pos": "v", "note": "弱動詞：予以處理→處理" },
+    { "term": "給予", "pos": "v", "note": "弱動詞：給予幫助→幫助" },
+    { "term": "展開", "pos": "v", "note": "弱動詞：展開討論→討論" },
+    { "term": "造成", "pos": "v", "note": "弱動詞＋抽象動名詞：造成九十八人死亡→死了九十八人" }
+  ],
+  "pseudo_jargon": [
+    { "term": "知名度", "pos": "n", "replacements": ["很有名", "名氣很大"], "note": "具有很高的知名度→很有名" },
+    { "term": "可讀性", "pos": "n", "replacements": ["很動人", "引人入勝", "很好看"], "note": "可讀性頗高→引人入勝" },
+    { "term": "可看性", "pos": "n", "replacements": ["更耐看", "好看"], "note": "更具可看性→更耐看" },
+    { "term": "可聽性", "pos": "n", "replacements": ["動聽"], "note": "頗具可聽性→動聽" },
+    { "term": "前瞻性", "pos": "n", "replacements": ["更有遠見"], "note": "更具前瞻性→更有遠見" },
+    { "term": "嚴重性", "pos": "n", "note": "灰區偽術語框架「具有...性」之黑名單詞；改寫依上下文還原為直白謂語" },
+    { "term": "必要性", "pos": "n", "note": "灰區偽術語框架「具有...性」之黑名單詞；改寫依上下文還原為直白謂語" },
+    { "term": "難度很高的?", "is_pattern": true, "replacements": ["很難的"], "note": "難度很高的技巧→很難的技巧" },
+    { "term": "熱情型的?", "is_pattern": true, "replacements": ["熱情的"], "note": "熱情型的人→熱情的人" },
+    { "term": "太?專業性的?", "is_pattern": true, "replacements": ["太專門的", "專門的"], "note": "太專業性的字眼→太專門的字眼" },
+    { "term": "愛國主義的精神", "is_pattern": true, "replacements": ["愛國精神"], "note": "主義本身即是精神，無須疊床" }
+  ],
+  "tech_whitelist": [
+    { "term": "高可用性", "pos": "nz", "note": "High Availability" },
+    { "term": "可觀測性", "pos": "nz", "note": "Observability" },
+    { "term": "可擴展性", "pos": "nz", "note": "Scalability" },
+    { "term": "冪等性", "pos": "nz", "note": "Idempotency" },
+    { "term": "確定性", "pos": "nz", "note": "Determinism" },
+    { "term": "向量化", "pos": "vn", "note": "Vectorization" }
+  ],
+  "idiom_map": [
+    { "term": "總的來說", "replacements": ["總而言之", "簡言之"], "note": "口水套語→四字格收束" },
+    { "term": "不是一句話就能夠說得清楚的", "replacements": ["一言難盡"], "note": "亦匹配變體「不是一句話就能說清楚的」；tech profile 降低古雅成語替換強度" },
+    { "term": "基於這個原因", "replacements": ["因此", "為此"], "note": "冗餘繫詞套語→雙音節連接詞" }
+  ]
+}
