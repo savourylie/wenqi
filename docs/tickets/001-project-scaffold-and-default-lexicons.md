@@ -1,7 +1,7 @@
 # [TICKET-001] 專案骨架與內建詞庫 (Project Scaffold & Default Lexicons)
 
 ## Status
-`pending`
+`done`
 
 ## Dependencies
 - Requires: None
@@ -10,14 +10,14 @@
 建立 `wenqi` 系統的工程骨架與共享資料基礎：規格 §3.2 的目錄拓撲、Python 專案設定（含 `jieba` 依賴與測試框架），以及 `config/default_lexicons.json` 內建基礎詞庫。後續所有引擎模組與 Skills 都依賴此骨架與詞庫；詞庫內容直接決定 L1 弱動詞/偽術語偵測與 L4 口水套語替換的覆蓋率。
 
 ## Acceptance Criteria
-- [ ] 存在規格 §3.2 的目錄結構：`config/`、`engine/`（含 `__init__.py` 與 `rules/`）、`skills/`；引擎模組檔可先為佔位 stub，但路徑與檔名須與規格一致。
-- [ ] Python 專案可安裝並執行：宣告 `jieba` 依賴與測試框架（如 pytest），`python3 -c "import jieba"` 與測試指令可跑。
-- [ ] `config/default_lexicons.json` 包含四類詞表，且每類至少收錄 Part I 案例庫出現的詞條：
+- [x] 存在規格 §3.2 的目錄結構：`config/`、`engine/`（含 `__init__.py` 與 `rules/`）、`skills/`；引擎模組檔可先為佔位 stub，但路徑與檔名須與規格一致。
+- [x] Python 專案可安裝並執行：宣告 `jieba` 依賴與測試框架（如 pytest），`python3 -c "import jieba"` 與測試指令可跑。
+- [x] `config/default_lexicons.json` 包含四類詞表，且每類至少收錄 Part I 案例庫出現的詞條：
   - 弱動詞表：進行、作出、加以、予以、給予、展開、造成。
   - 偽術語黑名單：知名度、可讀性、可看性、可聽性、前瞻性、嚴重性、必要性，及「難度很高的／熱情型的／專業性的／愛國主義的精神」等pattern。
   - 預設技術白名單：高可用性、可觀測性、可擴展性、冪等性、確定性、向量化（含 pos 與英文註記，與 §4.1A `global_whitelist` 一致）。
   - 四字格映射表：總的來說→總而言之／簡言之、不是一句話就能說清楚→一言難盡等。
-- [ ] 詞庫 JSON 可被程式載入並通過 schema 自檢（欄位齊全、無重複條目）。
+- [x] 詞庫 JSON 可被程式載入並通過 schema 自檢（欄位齊全、無重複條目）。
 
 ## Design Reference
 - `zh_polish_skill_spec_v2.md` §3.2（目錄結構）、§4.1A（global_whitelist 預設內容）、Part I §2.1.2／§2.4.2（詞表來源案例）。
