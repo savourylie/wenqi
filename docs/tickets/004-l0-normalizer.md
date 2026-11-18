@@ -1,10 +1,10 @@
 # [TICKET-004] L0 預處理：Markdown 遮罩與「的／地／得」消歧義 (L0 Normalizer)
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #003
+- Requires: #003 ✅
 
 ## Description
 實作 `engine/l0_normalizer.py`：在進入 L1~L4 之前的預處理層。包含 Markdown AST 遮罩（保護 code block、連結、公式、引用不被改寫），以及「的／地／得」左右詞性窗口消歧義狀態機——台灣作者慣以「的」通代三角色，若只從字面匹配「地」會漏失 70% 以上狀語病灶。此層同時產出 `de_normalization_map` 與 `L0_TYPO_DE_COMP` 錯別字診斷，是 L2 規則與 Diagnostic Payload 的必要輸入。
