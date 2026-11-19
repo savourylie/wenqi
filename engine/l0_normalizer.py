@@ -44,6 +44,7 @@ _FENCE_LINE = re.compile(
     r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<info>[^\r\n]*)(?=\r?$)", re.MULTILINE
 )
 _QUOTE_LINE = re.compile(r"^ {0,3}>[^\r\n]*", re.MULTILINE)
+_MASKED_CHARACTERS = re.compile(r"[^\r\n]+")
 _INLINE_MASK = re.compile(
     r"(?<!`)(?P<ticks>`+)(?!`)"
     r"(?:(?!\r?\n[ \t]*\r?\n)[\s\S])*?(?<!`)(?P=ticks)(?!`)"
@@ -69,6 +70,7 @@ class MaskRegion:
     original_end: int
     masked_start: int
     masked_end: int
+    is_block: bool = False
 
 
 class DeNormalizationEntry(TypedDict):
@@ -179,26 +181,39 @@ def mask_markdown(text: str) -> tuple[str, list[MaskRegion]]:
     if not isinstance(text, str):
         raise L0Error("L0 輸入必須為字串")
 
-    spans: list[tuple[int, int]] = []
+    spans: list[tuple[int, int, bool]] = []
     cursor = 0
     for start, end in _block_spans(text):
-        spans.extend(_inline_spans(text, cursor, start))
-        spans.append((start, end))
+        spans.extend((left, right, False) for left, right in _inline_spans(text, cursor, start))
+        spans.append((start, end, True))
         cursor = end
-    spans.extend(_inline_spans(text, cursor, len(text)))
+    spans.extend((left, right, False) for left, right in _inline_spans(text, cursor, len(text)))
 
     parts: list[str] = []
     regions: list[MaskRegion] = []
     original_cursor = masked_cursor = 0
-    for index, (start, end) in enumerate(spans):
+    for index, (start, end, is_block) in enumerate(spans):
         placeholder = f"__MASK_{index}__"
         parts.extend((text[original_cursor:start], placeholder))
         masked_start = masked_cursor + start - original_cursor
         masked_cursor = masked_start + len(placeholder)
-        regions.append(MaskRegion(start, end, masked_start, masked_cursor))
+        regions.append(MaskRegion(start, end, masked_start, masked_cursor, is_block))
         original_cursor = end
     parts.append(text[original_cursor:])
     return "".join(parts), regions
+
+
+def visible_prose(text: str, regions: Sequence[MaskRegion]) -> str:
+    """遮罩區以等長佔位字元表示，保留原文座標與換行。"""
+    parts = []
+    start = 0
+    for region in regions:
+        parts.append(text[start:region.original_start])
+        hidden = text[region.original_start:region.original_end]
+        parts.append(_MASKED_CHARACTERS.sub(lambda match: "\0" * len(match[0]), hidden))
+        start = region.original_end
+    parts.append(text[start:])
+    return "".join(parts)
 
 
 def _restore_tokens(

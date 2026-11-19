@@ -380,6 +380,12 @@ wenqi/
 ```
 
 ##### 模式二：`--mode lint --layer <L1|L2|L3|L4|ALL>` (供改寫 Skills 使用)
+
+- **整句**以未遮罩正文中的 `。！？` 和段落邊界切分，`target_sentence` 保留該句的原文。前後文取相鄰的整句。`total_sentences` 計正文的整句數，`flagged_sentences` 計有診斷的整句數，每句的命中合併於同一筆診斷。
+- **分句**供規則在整句內依 `[，。！？；：]` 細分，例如 L4 的分句長度檢查。下例逗號前後各為一個分句，兩側的命中都列在 `L14_S1` 的 `issues`。
+- `line_number` 是句首所在的原文行號，從 1 起算。`sentence_id` 的 `S` 按句首在同一行的出現順序從 1 編號。`de_normalization_map` 的 `char_idx` 是相對於 `target_sentence` 的 Unicode 字元索引，從 0 起算。
+- 凍結的白名單詞組同時出現在 `frozen_whitelist_hits` 與 `must_keep_content_words`。`--layer ALL` 包含 L0 的補語用字診斷，有命中時 `issue_counts` 會增加 `L0` 計數。指定單層時，`issues` 只回傳該層的命中。
+
 ```json
 {
   "mode": "LINT",
@@ -402,11 +408,11 @@ wenqi/
       "target_sentence": "在系統重構的過程當中，團隊對檢索模組的高可用性進行了詳細的評估。",
       "context_after": "評估結果顯示延遲降低了三成。",
       "frozen_whitelist_hits": ["高可用性"],
-      "must_keep_content_words": ["系統", "重構", "團隊", "檢索", "模組", "評估"],
+      "must_keep_content_words": ["系統", "重構", "團隊", "檢索", "模組", "高可用性", "評估"],
       "de_normalization_map": [
-        { "char_idx": 6, "surface": "的", "true_role": "DE_ATTR" },
-        { "char_idx": 16, "surface": "的", "true_role": "DE_ATTR" },
-        { "char_idx": 26, "surface": "的", "true_role": "DE_ATTR" }
+        { "char_idx": 5, "surface": "的", "true_role": "DE_ATTR" },
+        { "char_idx": 18, "surface": "的", "true_role": "DE_ATTR" },
+        { "char_idx": 28, "surface": "的", "true_role": "DE_ATTR" }
       ],
       "issues": [
         {
@@ -623,10 +629,11 @@ usage: ast_scanner.py [-h] --mode {preflight,lint,update-state}
    - **目標改寫**：「這套架構比舊版起步更早、邁步更快，在灰暗而淒冷的天空下依然清晰易讀。」
 
 #### 8.2 Coding Agent 實作路線圖 (Implementation Milestones)
-- **Milestone 1：基礎建設與 L0/L5 (`state_manager.py`, `tokenizer_adapter.py`, `l0_normalizer.py`, `l5_preflight.py`)**
+- **Milestone 1：基礎建設與 L0/L5 (`state_manager.py`, `tokenizer_adapter.py`, `l0_normalizer.py`, `l5_preflight.py`, `ast_scanner.py`)**
   - 完成 `~/.config/wenqi/` 讀寫與 `content_hash` 自動對齊邏輯。
   - 實作 `JiebaPosAdapter`、Markdown 遮罩與「的/地/得」左右詞性消歧義狀態機，通過 L0 單元測試。
-- **Milestone 2：四層規則引擎 (`rules/l1` ~ `rules/l4` & `ast_scanner.py`)**
+  - 串接 Scanner CLI，完成 §4.2 的輸出契約和規則註冊介面（TICKET-006）。
+- **Milestone 2：四層規則引擎 (`rules/l1` ~ `rules/l4`)**
   - 依第 5.2 節表格實作 L1~L4 的 POS-Regex 與跨度計算邏輯，並在每條 Issue 輸出中附帶 `theoretical_basis` 欄位（將 Part I 的語言學理據注入給 LLM）。
   - 跑通 Section 8.1 的 Golden Test Suite。
 - **Milestone 3：撰寫 6 個 Skills (`skills/*/SKILL.md`)**

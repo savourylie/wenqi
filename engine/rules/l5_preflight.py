@@ -11,9 +11,9 @@ from itertools import accumulate
 from typing import Iterable, Iterator, Literal, Sequence, TypedDict
 
 from .. import load_default_lexicons
-from ..l0_normalizer import MaskRegion, normalize
+from ..l0_normalizer import normalize, visible_prose
 from ..state_manager import DEFAULT_PROFILE, content_hash, resolve_profile
-from ..tokenizer_adapter import Token, TokenizerAdapter
+from ..tokenizer_adapter import LATIN_WORD_CHAR, Token, TokenizerAdapter, whitelist_matches
 
 _SUFFIXES = ("性", "度", "化")
 _SUFFIX_REASON = "SUFFIX_XING_UNREGISTERED (帶有『~性/~度/~化』後綴但未登錄於白名單)"
@@ -24,14 +24,12 @@ _NON_PREFIX_POS = {"p", "c", "u", "uj", "x", "m", "mq", "q"}
 _NUMERAL = r"(?:\d+|[〇零一二兩三四五六七八九十百千萬億兆幾數]+)"
 _DEGREE_QUANTITY = re.compile(rf"{_NUMERAL}度")
 _SENTENCE_BREAK = re.compile(r"[。！？!?]+|\.(?![A-Za-z0-9])|[\r\n]+")
-_MASKED_CHARACTERS = re.compile(r"[^\r\n]+")
 _ENGLISH_WORD = r"[A-Za-z][A-Za-z0-9]*(?:[-‐‑/][A-Za-z0-9]+)*"
-_LATIN_WORD_CHAR = r"[A-Za-z0-9_/‐‑-]"
-_ENGLISH_WORDS = re.compile(rf"(?<!{_LATIN_WORD_CHAR}){_ENGLISH_WORD}(?!{_LATIN_WORD_CHAR})")
+_ENGLISH_WORDS = re.compile(rf"(?<!{LATIN_WORD_CHAR}){_ENGLISH_WORD}(?!{LATIN_WORD_CHAR})")
 _HORIZONTAL_SPACE = r"[ \t\u3000]"
 _TEMPORAL_CONNECTOR = rf"(?i:before|after){_HORIZONTAL_SPACE}"
 _BEFORE_AND_AFTER = (
-    rf"(?i:before{_HORIZONTAL_SPACE}+and{_HORIZONTAL_SPACE}+after)(?!{_LATIN_WORD_CHAR})"
+    rf"(?i:before{_HORIZONTAL_SPACE}+and{_HORIZONTAL_SPACE}+after)(?!{LATIN_WORD_CHAR})"
 )
 _ENGLISH_PHRASE = (
     rf"(?:{_BEFORE_AND_AFTER}|{_ENGLISH_WORD})"
@@ -74,33 +72,6 @@ class PreflightPayload(TypedDict):
     suspect_terms_for_review: list[SuspectTerm]
 
 
-def _visible_prose(text: str, regions: list[MaskRegion]) -> str:
-    """排除 Markdown 遮罩內容，保留字元座標與換行供例句定位。"""
-    parts = []
-    start = 0
-    for region in regions:
-        parts.append(text[start:region.original_start])
-        masked = text[region.original_start:region.original_end]
-        # 非空白的佔位字元可避免弱動詞跨過遮罩，匹配後方的英文詞。
-        parts.append(_MASKED_CHARACTERS.sub(lambda match: "\0" * len(match[0]), masked))
-        start = region.original_end
-    parts.append(text[start:])
-    return "".join(parts)
-
-
-def _term_hits(prose: str, terms: Iterable[str]) -> list[re.Match[str]]:
-    """在正文比對原文詞組，英文邊界避免誤命中其他詞的子字串。"""
-    hits = []
-    for term in dict.fromkeys(terms):
-        pattern = re.escape(term)
-        if re.fullmatch(_LATIN_WORD_CHAR, term[0]):
-            pattern = rf"(?<!{_LATIN_WORD_CHAR})" + pattern
-        if re.fullmatch(_LATIN_WORD_CHAR, term[-1]):
-            pattern += rf"(?!{_LATIN_WORD_CHAR})"
-        hits.extend(re.finditer(pattern, prose))
-    return sorted(hits, key=lambda hit: hit.start())
-
-
 def _suffix_spans(prose: str, tokens: Sequence[Token]) -> Iterator[tuple[int, int]]:
     starts_by_end: dict[int, int] = {}
     for index, token in enumerate(tokens):
@@ -136,7 +107,7 @@ def _suffix_spans(prose: str, tokens: Sequence[Token]) -> Iterator[tuple[int, in
 
     # 同篇辨認過的完整詞可補回被切碎的候選。只延伸到同一個後綴終點。
     terms = (prose[start:end] for end, start in starts_by_end.items())
-    for hit in _term_hits(prose, terms):
+    for hit in whitelist_matches(prose, terms):
         end = hit.end()
         if end in starts_by_end:
             starts_by_end[end] = min(starts_by_end[end], hit.start())
@@ -151,7 +122,7 @@ def _code_switch_hits(
     verbs = "|".join(map(re.escape, (*weak_verbs, "做")))
     pattern = re.compile(
         rf"(?:{verbs}){_ASPECT}{_REPETITIONS}{_HORIZONTAL_SPACE}*"
-        rf"{_ENGLISH_PHRASE}(?!{_LATIN_WORD_CHAR})"
+        rf"{_ENGLISH_PHRASE}(?!{LATIN_WORD_CHAR})"
     )
     token_starts = {token.start_char for token in tokens}
     return [match for match in pattern.finditer(prose) if match.start() in token_starts]
@@ -214,7 +185,7 @@ def _technical_profile_reason(
     han_words = sum(_HAN.search(token.surface) is not None for token in tokens)
     english_words = len(_ENGLISH_WORDS.findall(prose))
     word_count = han_words + english_words
-    tech_count = len(_term_hits(prose, tech_terms))
+    tech_count = len(whitelist_matches(prose, tech_terms))
     tech_share = tech_count / word_count if word_count else 0
     if tech_share >= _TECH_TERM_SHARE:
         return f"正文命中 {tech_count} 次內建技術詞，約佔詞數 {tech_share:.0%}。"
@@ -309,9 +280,9 @@ def preflight(
     並避免將單篇保護詞註冊到 Jieba 的共用詞典。
     """
     normalized = normalize(text, tokenizer)
-    prose = _visible_prose(text, normalized.mask_regions)
+    prose = visible_prose(text, normalized.mask_regions)
     lexicons = load_default_lexicons()
-    whitelist_hits = _term_hits(prose, (entry["term"] for entry in whitelist))
+    whitelist_hits = whitelist_matches(prose, (entry["term"] for entry in whitelist))
     code_switch_hits = _code_switch_hits(
         prose, normalized.tokens, (entry["term"] for entry in lexicons["weak_verbs"])
     )

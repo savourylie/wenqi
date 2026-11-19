@@ -24,8 +24,9 @@ import logging
 import os
 import subprocess
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from . import LexiconError, load_default_lexicons
 
@@ -81,6 +82,28 @@ def default_state_dir() -> Path:
 
 def _resolve_state_dir(state_dir: Optional[Path]) -> Path:
     return Path(state_dir) if state_dir is not None else default_state_dir()
+
+
+@contextmanager
+def state_lock(state_dir: Optional[Path] = None) -> Iterator[None]:
+    """序列化 CLI 讀取遷移與白名單的讀取、修改和寫入。"""
+    lock_path = _resolve_state_dir(state_dir) / ".lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("ab") as lock_file:
+        if os.name == "nt":
+            import msvcrt
+
+            lock_file.seek(0)
+            msvcrt.locking(lock_file.fileno(), msvcrt.LK_LOCK, 1)
+            try:
+                yield
+            finally:
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            yield
 
 
 def global_config_path(state_dir: Optional[Path] = None) -> Path:
@@ -650,13 +673,16 @@ def load_settings_for_file(
     profile_override: Optional[str] = None,
     ephemeral_terms: Optional[List[str]] = None,
     state_dir: Optional[Path] = None,
+    *,
+    text: Optional[str] = None,
 ) -> Dict[str, Any]:
     """檔案模式設定讀取：repo 內走 workspace＋遷移；repo 外無狀態（Q2）。
 
-    文章檔僅唯讀開啟計算指紋。ephemeral 白名單只於記憶體合併，永不落盤。
+    可傳入呼叫端唯讀取得的原文，讓設定解析和掃描使用同一份文字。
+    ephemeral 白名單只於記憶體合併。
     """
     file_path = Path(file_path)
-    ch = file_content_hash(file_path)
+    ch = file_content_hash(file_path) if text is None else content_hash(text)
     global_config = load_global_config(state_dir)
     ephemeral = _ephemeral_entries(ephemeral_terms)
     repo_root = find_repo_root(file_path)
