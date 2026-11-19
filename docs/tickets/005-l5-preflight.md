@@ -1,10 +1,10 @@
 # [TICKET-005] L5 預檢：疑似術語抽取與語體推測 (L5 Preflight)
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #002, #003
+- Requires: #002 ✅, #003 ✅
 
 ## Description
 實作 `engine/rules/l5_preflight.py`：改文前的守門員預檢。掃描文章中未登錄的疑似專有名詞（`~性/~度/~化` 後綴詞與中英夾雜弱動詞結構），推測本文語體（tech/social/essay），輸出 §4.2 模式一的 `L5_PREFLIGHT` payload，供 `zh-l5-guard` Skill 與作者互動建立白名單。沒有這層，L1 規則會把「高可用性」「冪等性」等精確技術定義誤當偽術語拆解。

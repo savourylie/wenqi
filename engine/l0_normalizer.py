@@ -1,5 +1,353 @@
-"""L0 預處理：Markdown 遮罩、白名單 Token 冷凍、「的/地/得」POS 左右鄰居消歧義。
+"""L0 Markdown 遮罩與「的／地／得」詞性窗口消歧義（規格 §5.1B/C）。"""
 
-實作於 TICKET-004。
-規格：zh_polish_skill_spec_v2.md §5.1B、§5.1C。
-"""
+from __future__ import annotations
+
+import re
+import unicodedata
+from dataclasses import dataclass, replace
+from functools import lru_cache
+from itertools import chain
+from typing import Iterator, Optional, Sequence, TypedDict
+
+from engine import load_default_lexicons
+from engine.tokenizer_adapter import JiebaPosAdapter, Token, TokenizerAdapter
+
+DE_ATTR = "DE_ATTR"
+DE_ADV = "DE_ADV"
+DE_COMP = "DE_COMP"
+
+_DE_MARKERS = {"的", "地", "得"}
+_MODAL_VERBS = {"能", "會", "可以"}
+_NOUN_POS = {"n", "nr", "ns", "nt", "nz"}
+_QUANTIFIER_POS = {"m", "q", "mq"}
+_COMPLEMENT_ADJECTIVE_POS = {"a", "ad", "b", "an"}
+_ADVERBIAL_POS = {"d", "a", "ad", "b"}
+_VERBAL_POS = {"v", "vn"}
+_VERB_INTRODUCERS = {"去", "來", "把", "被", "將"}
+_ASPECT_PARTICLES = {"了", "過", "著"}
+_OBJECT_POS = {"n", "nz", "r"}
+_DEMONSTRATIVE_PREFIXES = ("這", "那", "此", "該")
+_DEGREE_ADVERBS = (
+    "很", "太", "極", "更", "不夠", "相當", "十分", "格外", "頗", "稍微",
+    "比較", "較為", "過於", "極其", "無比", "異常", "越來越", "那麼", "這麼",
+    "有點", "非常",
+)
+_RESULT_STATES = {
+    "要命", "死去活來", "一乾二淨", "清楚", "好", "快", "多", "遠", "慢",
+    "乾淨", "明白", "飽", "累", "壞", "完", "懂",
+}
+
+_FRONTMATTER = re.compile(
+    r"\A\ufeff?---[ \t]*\r?\n.*?^(?:---|\.\.\.)[ \t]*(?=\r?$)", re.MULTILINE | re.DOTALL
+)
+_FENCE_LINE = re.compile(
+    r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<info>[^\r\n]*)(?=\r?$)", re.MULTILINE
+)
+_QUOTE_LINE = re.compile(r"^ {0,3}>[^\r\n]*", re.MULTILINE)
+_INLINE_MASK = re.compile(
+    r"(?<!`)(?P<ticks>`+)(?!`)"
+    r"(?:(?!\r?\n[ \t]*\r?\n)[\s\S])*?(?<!`)(?P=ticks)(?!`)"
+    r"|(?P<link>\]\()"
+    r"|(?<!\$)\$(?![\s$])(?:\\[^\r\n]|[^$\\\r\n])*?(?<!\s)\$(?!\$)"
+)
+_LINK_DELIMITER = re.compile(
+    r"\\[^\r\n]|<[^<>\r\n]*>"
+    r"""|(?<=[ \t])(?P<quote>["'])(?:\\[^\r\n]|(?!(?P=quote))[^\\\r\n])*(?P=quote)(?=[ \t]*\))"""
+    r"|[()\r\n]"
+)
+
+
+class L0Error(ValueError):
+    """L0 無法處理輸入。"""
+
+
+@dataclass(frozen=True)
+class MaskRegion:
+    """同一遮罩區在原文與遮罩後文本的半開字元區間。"""
+
+    original_start: int
+    original_end: int
+    masked_start: int
+    masked_end: int
+
+
+class DeNormalizationEntry(TypedDict):
+    char_idx: int
+    surface: str
+    true_role: str
+
+
+class L0Issue(TypedDict):
+    layer: str
+    rule_id: str
+    char_idx: int
+    surface: str
+    suggestion: str
+    theoretical_basis: str
+
+
+@dataclass
+class L0Result:
+    """L0 文件級輸出。Token 與診斷的位置均使用原文字元座標。"""
+
+    masked_text: str
+    mask_regions: list[MaskRegion]
+    tokens: list[Token]
+    de_normalization_map: list[DeNormalizationEntry]
+    issues: list[L0Issue]
+
+
+def _fenced_code_spans(text: str, start: int) -> Iterator[tuple[int, int]]:
+    opener = None
+    for line in _FENCE_LINE.finditer(text, start):
+        marker = line["marker"]
+        if opener is None:
+            if marker[0] != "`" or "`" not in line["info"]:
+                opener = line
+            continue
+
+        opening_marker = opener["marker"]
+        if marker.startswith(opening_marker) and not line["info"].strip(" \t"):
+            yield opener.start(), line.end()
+            opener = None
+    if opener is not None:
+        yield opener.start(), len(text)
+
+
+def _block_spans(text: str) -> list[tuple[int, int]]:
+    frontmatter = _FRONTMATTER.match(text)
+    spans = [frontmatter.span()] if frontmatter else []
+    spans.extend(_fenced_code_spans(text, frontmatter.end() if frontmatter else 0))
+    spans.extend(line.span() for line in _QUOTE_LINE.finditer(text))
+
+    # 引用標記可能在程式碼區塊內。保留外層遮罩，避免遮罩切進彼此的區間。
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(spans):
+        if merged and start < merged[-1][1]:
+            previous_start, previous_end = merged[-1]
+            merged[-1] = (previous_start, max(previous_end, end))
+        else:
+            merged.append((start, end))
+    return merged
+
+
+def _is_escaped(text: str, position: int) -> bool:
+    start = position
+    while start > 0 and text[start - 1] == "\\":
+        start -= 1
+    return (position - start) % 2 == 1
+
+
+def _link_ends(text: str, start: int, end: int) -> dict[int, int]:
+    # 一次配對所有連結括號，跳過角括號目的地與引號標題內的括號。
+    openers: list[int] = []
+    ends: dict[int, int] = {}
+    for match in _LINK_DELIMITER.finditer(text, start, end):
+        delimiter = match[0]
+        if delimiter == "(":
+            openers.append(match.start())
+        elif delimiter == ")" and openers:
+            opener = openers.pop()
+            if opener > start and text[opener - 1] == "]":
+                ends[opener - 1] = match.end()
+        elif delimiter in {"\r", "\n"}:
+            openers.clear()
+    return ends
+
+
+def _inline_spans(text: str, start: int, end: int) -> Iterator[tuple[int, int]]:
+    cursor = start
+    link_ends = None
+    while match := _INLINE_MASK.search(text, cursor, end):
+        cursor = match.end()
+        if _is_escaped(text, match.start()):
+            cursor = match.end("ticks") if match["ticks"] else match.start() + 1
+            continue
+
+        if match["link"]:
+            if link_ends is None:
+                link_ends = _link_ends(text, start, end)
+            link_end = link_ends.get(match.start())
+            if link_end is None:
+                continue
+            cursor = link_end
+        yield match.start(), cursor
+
+
+def mask_markdown(text: str) -> tuple[str, list[MaskRegion]]:
+    """將六類受保護區塊替換為 ``__MASK_i__``，並保存對應區間。"""
+    if not isinstance(text, str):
+        raise L0Error("L0 輸入必須為字串")
+
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    for start, end in _block_spans(text):
+        spans.extend(_inline_spans(text, cursor, start))
+        spans.append((start, end))
+        cursor = end
+    spans.extend(_inline_spans(text, cursor, len(text)))
+
+    parts: list[str] = []
+    regions: list[MaskRegion] = []
+    original_cursor = masked_cursor = 0
+    for index, (start, end) in enumerate(spans):
+        placeholder = f"__MASK_{index}__"
+        parts.extend((text[original_cursor:start], placeholder))
+        masked_start = masked_cursor + start - original_cursor
+        masked_cursor = masked_start + len(placeholder)
+        regions.append(MaskRegion(start, end, masked_start, masked_cursor))
+        original_cursor = end
+    parts.append(text[original_cursor:])
+    return "".join(parts), regions
+
+
+def _restore_tokens(
+    masked_text: str, regions: list[MaskRegion], tokenizer: TokenizerAdapter
+) -> list[Token]:
+    tokens = iter(tokenizer.tokenize(masked_text))
+    token = next(tokens, None)
+    restored: list[Token] = []
+    visible_start = offset = 0
+
+    for region in chain(regions, (None,)):
+        visible_end = region.masked_start if region is not None else len(masked_text)
+        while token is not None and token.start_char < visible_end:
+            start = max(token.start_char, visible_start)
+            end = min(token.end_char, visible_end)
+            if start < end:
+                pieces: Sequence[Token]
+                if start == token.start_char and end == token.end_char:
+                    pieces, shift = (token,), offset
+                else:
+                    # 跨越佔位符的 token 只重新分詞可見部分，保留正確詞性與冷凍狀態。
+                    pieces, shift = tokenizer.tokenize(masked_text[start:end]), start + offset
+                restored.extend(
+                    replace(
+                        piece,
+                        start_char=piece.start_char + shift,
+                        end_char=piece.end_char + shift,
+                        true_de_role="",
+                    )
+                    for piece in pieces
+                )
+            if token.end_char > visible_end:
+                break
+            token = next(tokens, None)
+
+        if region is not None:
+            restored.append(
+                Token(
+                    surface=masked_text[region.masked_start:region.masked_end],
+                    pos="x",
+                    start_char=region.original_start,
+                    end_char=region.original_end,
+                    is_frozen=False,
+                )
+            )
+            visible_start = region.masked_end
+            offset = region.original_end - region.masked_end
+    return restored
+
+
+def _is_complement(left: Token, right: Token, right2: Optional[Token]) -> bool:
+    if left.pos not in {"v", "a"} or left.surface in _MODAL_VERBS:
+        return False
+
+    if right.surface in _DEGREE_ADVERBS:
+        # 程度詞可獨立出現在句尾，也可被 jieba 拆成「十分」＋「明白」。
+        if right2 is None or right2.surface in {"\n", "\r", "\r\n"} or all(
+            unicodedata.category(char).startswith("P") for char in right2.surface
+        ):
+            return True
+        return right2.pos in _COMPLEMENT_ADJECTIVE_POS or right2.surface in _RESULT_STATES
+
+    # 「很多書」、「更新內容」的首詞也可能以程度副詞的字開頭。
+    if right2 is not None and right2.pos in _NOUN_POS:
+        return False
+    return (
+        (right.surface.startswith(_DEGREE_ADVERBS) and right.pos not in _NOUN_POS)
+        or right.surface in _RESULT_STATES
+        or right.pos in _COMPLEMENT_ADJECTIVE_POS
+    )
+
+
+@lru_cache(maxsize=1)
+def _weak_verbs() -> frozenset[str]:
+    return frozenset(entry["term"] for entry in load_default_lexicons()["weak_verbs"])
+
+
+def _is_nominal_lead(token: Token) -> bool:
+    return (
+        token.pos in _QUANTIFIER_POS
+        or (token.pos == "r" and token.surface.startswith(_DEMONSTRATIVE_PREFIXES))
+        or token.surface in _weak_verbs()
+    )
+
+
+def _is_adverbial(
+    left2: Optional[Token], left: Token, right: Token, right2: Optional[Token]
+) -> bool:
+    if left.pos != "i" and (len(left.surface) < 2 or left.pos not in _ADVERBIAL_POS):
+        return False
+
+    if right.pos == "vn":
+        return (
+            right2 is not None
+            and (right2.surface in _ASPECT_PARTICLES or right2.pos in _OBJECT_POS)
+            and (left2 is None or not _is_nominal_lead(left2))
+        )
+    return right.pos == "v" or (
+        right.surface in _VERB_INTRODUCERS and right2 is not None and right2.pos in _VERBAL_POS
+    )
+
+
+def _normalize_de(
+    tokens: list[Token],
+) -> tuple[list[DeNormalizationEntry], list[L0Issue]]:
+    normalization_map: list[DeNormalizationEntry] = []
+    issues: list[L0Issue] = []
+    for i, token in enumerate(tokens):
+        if token.surface not in _DE_MARKERS or token.is_frozen:
+            continue
+
+        left = tokens[i - 1] if i >= 1 else None
+        right = tokens[i + 1] if i + 1 < len(tokens) else None
+        right2 = tokens[i + 2] if i + 2 < len(tokens) else None
+        if left is not None:
+            if token.surface == "地" and left.pos in _QUANTIFIER_POS:
+                continue  # 「一塊地」的「地」是名詞。
+            if token.surface == "得" and (left.pos == "r" or left.pos in _NOUN_POS):
+                continue  # 主語後的助動詞 děi 不屬於三種助詞。
+
+        role = DE_ATTR
+        if left is not None and right is not None:
+            if _is_complement(left, right, right2):
+                role = DE_COMP
+            elif _is_adverbial(tokens[i - 2] if i >= 2 else None, left, right, right2):
+                role = DE_ADV
+
+        token.true_de_role = role
+        normalization_map.append(
+            DeNormalizationEntry(char_idx=token.start_char, surface=token.surface, true_role=role)
+        )
+        if role == DE_COMP and token.surface != "得":
+            issues.append(
+                L0Issue(
+                    layer="L0",
+                    rule_id="L0_TYPO_DE_COMP",
+                    char_idx=token.start_char,
+                    surface=token.surface,
+                    suggestion="得",
+                    theoretical_basis="補語標記應用「得」",
+                )
+            )
+    return normalization_map, issues
+
+
+def normalize(text: str, tokenizer: Optional[TokenizerAdapter] = None) -> L0Result:
+    """遮罩、分詞與消歧義。可傳入已註冊白名單的分詞器。"""
+    masked_text, regions = mask_markdown(text)
+    adapter = tokenizer if tokenizer is not None else JiebaPosAdapter()
+    tokens = _restore_tokens(masked_text, regions, adapter)
+    normalization_map, issues = _normalize_de(tokens)
+    return L0Result(masked_text, regions, tokens, normalization_map, issues)

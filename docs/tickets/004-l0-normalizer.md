@@ -1,10 +1,10 @@
 # [TICKET-004] L0 預處理：Markdown 遮罩與「的／地／得」消歧義 (L0 Normalizer)
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #003
+- Requires: #003 ✅
 
 ## Description
 實作 `engine/l0_normalizer.py`：在進入 L1~L4 之前的預處理層。包含 Markdown AST 遮罩（保護 code block、連結、公式、引用不被改寫），以及「的／地／得」左右詞性窗口消歧義狀態機——台灣作者慣以「的」通代三角色，若只從字面匹配「地」會漏失 70% 以上狀語病灶。此層同時產出 `de_normalization_map` 與 `L0_TYPO_DE_COMP` 錯別字診斷，是 L2 規則與 Diagnostic Payload 的必要輸入。
@@ -33,3 +33,13 @@
 - 單元測試覆蓋 §5.1C 各條件與排除項（含「獲得」「我得去」「一份詳細的評估」vn 名詞化 vs「詳細地評估了」vn 動詞化）。
 - 遮罩測試：code block 內的「進行研究」不產生診斷；blockquote 不套用規則。
 - 以 Golden Case 2 輸入驗證兩個 L0 斷言。
+
+## As-Built Notes
+
+### 2026-11-19
+
+- `normalize(text, tokenizer=None)` 接受 #003 的分詞器，複用既有的白名單冷凍標記。先隔離 Frontmatter、圍欄程式碼和整行引文，再辨識行內程式碼、連結目的地及單行 `$…$`。連結文字仍參與掃描。
+- 每個 `__MASK_i__` 對應一個 POS `x` token。`mask_regions` 以半開區間記錄原文和遮罩後的座標，可區分佔位符與正文中的同名字串。可見 token 的 `start_char`／`end_char` 對齊原文。
+- 補語採左鄰詞性加右鄰程度詞、結果詞、形容詞或句尾程度詞四種證據。右鄰後接名詞時加上防誤判條件，涵蓋「好話」、「很多書」與「更新內容」。狀語左鄰接受雙字以上的 `b`，`vn` 的量詞、指示詞與既有弱動詞表優先判為名詞結構。量詞後的名詞「地」及主語後的助動詞「得」排除於助詞標記。
+- `de_normalization_map` 與 `L0_TYPO_DE_COMP` 的 `char_idx` 均為文件絕對座標。錯字診斷帶有 `suggestion` 和 `theoretical_basis`，由 #006 組裝句級 payload 時換算座標。
+- 判定受 jieba 併詞與詞性限制，例如「跑得快」、「悄悄的」併成一詞，或「走」被標為名詞。缺少分句標點時，相鄰名詞也可能影響補語判定。`.venv/bin/python -m pytest -q` 共 108 項通過，包含 Golden Case 2 的兩項 L0 斷言和遮罩位移回歸。
