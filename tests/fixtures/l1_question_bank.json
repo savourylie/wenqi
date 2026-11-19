@@ -1,0 +1,721 @@
+[
+  {
+    "profile": "tech",
+    "text": "後端組昨晚已對訂單同步排程進行了徹底的排查，確認問題出在連線逾時。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對訂單同步排程進行了徹底的排查",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-01"
+  },
+  {
+    "profile": "tech",
+    "text": "成長團隊預計下週針對首頁結帳按鈕進行 A/B testing，藉此觀察轉換率變化。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 A/B testing",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-02"
+  },
+  {
+    "profile": "tech",
+    "text": "客服專員收到退款申請後，須於兩小時內核對訂單明細，並主動通知客戶處理進度。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "核對訂單明細",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "主動通知客戶處理進度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-03"
+  },
+  {
+    "profile": "social",
+    "text": "午後強降雨造成園區側門嚴重積水，物業人員已迅速展開防水閘門並拉起封鎖線。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "造成園區側門嚴重積水",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "展開防水閘門",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-04"
+  },
+  {
+    "profile": "tech",
+    "text": "金流閘道的頻繁逾時拖慢了整體結帳流程，值班窗口一早就接到上百通詢問電話。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "金流閘道的頻繁逾時",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-05"
+  },
+  {
+    "profile": "tech",
+    "text": "由於主倉的臨時盤點，物流組只能順延本批預購商品的統一出貨。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "主倉的臨時盤點",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "本批預購商品的統一出貨",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-06"
+  },
+  {
+    "profile": "social",
+    "text": "我的建議是把報到桌移到一樓中庭，志工才能從容地引導來賓，報到動線也會跑得更順暢。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "我的建議",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "從容地引導",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "跑得更順暢",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-07"
+  },
+  {
+    "profile": "essay",
+    "text": "昨天剛上線的搜尋介面獲得不少好評，連平常很少留言的資深會員都仔細地測試了一輪，覺得回應比舊版快得多。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "昨天剛上線的搜尋介面",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "平常很少留言的資深會員",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "仔細地測試",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "快得多",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-08"
+  },
+  {
+    "profile": "essay",
+    "text": "相較於第一版，新版退貨規範更具合理性，對剛入職的客服人員也頗具實用性。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "更具合理性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "頗具實用性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "剛入職的客服人員",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-09"
+  },
+  {
+    "profile": "tech",
+    "text": "舊版推薦模型在冷啟動階段並不具備足夠的準確度，近兩週的點擊率也呈現出偏低的穩定性。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "並不具備足夠的準確度",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出偏低的穩定性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-10"
+  },
+  {
+    "profile": "essay",
+    "text": "這台除濕機運轉時非常安靜，水箱好抽拉又不易漏水，開整晚也不會吵醒淺眠的人。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "非常安靜",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "不易漏水",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-11"
+  },
+  {
+    "profile": "tech",
+    "text": "扣款 API 具備冪等性與高可用性，即使網路逾時重試也不會重複扣款，並持續維持向後相容性。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備冪等性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "高可用性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "向後相容性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-12"
+  },
+  {
+    "profile": "social",
+    "text": "感謝現場民眾們頂著細雨前來排隊，這場手作市集也是今年河岸祭最受歡迎的活動之一。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "民眾們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "最受歡迎的活動之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-13"
+  },
+  {
+    "profile": "social",
+    "text": "作為本季三場設計工作坊之一的字體排印課，本週五晚間七點將在二樓教室準時開講。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "作為本季三場設計工作坊之一的字體排印課",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-14"
+  },
+  {
+    "profile": "essay",
+    "text": "這間老麵店在巷口開了三十多年，招牌乾麵和餛飩湯相當受在地熟客歡迎，平日中午常常客滿。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "相當受在地熟客歡迎",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-15"
+  },
+  {
+    "profile": "social",
+    "text": "週六親子導覽結束後，孩子們開心地拿著集章卡換貼紙；這座海港博物館也是我們這趟北海岸行程的四個停靠點之一。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "孩子們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "四個停靠點之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-16"
+  },
+  {
+    "profile": "tech",
+    "text": "雲端費率大幅調漲迫使維運工程師連夜重設快取規則，才把單月帳單壓回預算內。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "雲端費率大幅調漲迫使維運工程師連夜重設快取規則",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-17",
+    "known_gap": "無靈主語目前只認 NP+的+VN 主語；子句主語（迫使／讓）待規格決策"
+  },
+  {
+    "profile": "essay",
+    "text": "雲端費率連番調漲讓財務主管不得不重新核定下半年的運算預算。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "雲端費率連番調漲讓財務主管不得不重新核定下半年的運算預算",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-18",
+    "known_gap": "無靈主語目前只認 NP+的+VN 主語；子句主語（迫使／讓）待規格決策"
+  },
+  {
+    "profile": "tech",
+    "text": "基礎架構團隊每週密切追蹤雲端費率變動，並因雲端費率大幅調漲，提前將冷資料移轉到低頻儲存區。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "密切追蹤雲端費率變動",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "因雲端費率大幅調漲",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-19"
+  },
+  {
+    "profile": "tech",
+    "text": "API Gateway 在瞬間流量暴增時觸發限流機制，使得超額請求直接回傳 429 狀態碼，防止後端資料庫過載。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "API Gateway 在瞬間流量暴增時觸發限流機制，使得超額請求直接回傳 429 狀態碼",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-20"
+  },
+  {
+    "profile": "tech",
+    "text": "這筆異常退款申請昨天已被風控專員駁回，原因為收款帳戶與原訂單不符。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "這筆異常退款申請昨天已被風控專員駁回",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-21"
+  },
+  {
+    "profile": "social",
+    "text": "這項展場改建案至今仍未被核准，上個月才被推選為籌備會主委的林小姐只好先暫停發包。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "至今仍未被核准",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被推選為籌備會主委",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-22"
+  },
+  {
+    "profile": "essay",
+    "text": "法務組審核完合作條款後已正式核准這份合約，林經理也順利出任新專案負責人。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "已正式核准這份合約",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "順利出任新專案負責人",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-23"
+  },
+  {
+    "profile": "social",
+    "text": "這支年輕隊伍在八強賽惜敗後不幸被淘汰，隔天又傳出涉嫌簽賭的前領隊已在機場被捕，現場球迷議論紛紛。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "不幸被淘汰",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "已在機場被捕",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-24"
+  },
+  {
+    "profile": "tech",
+    "text": "新版評測框架呈現出極高的語意保真度，研究組昨天已對抽樣腳本加以全面翻修。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出極高的語意保真度",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對抽樣腳本加以全面翻修",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-25"
+  },
+  {
+    "profile": "tech",
+    "text": "新版評測框架呈現出極高的語意保真度，研究組昨天已對抽樣腳本加以全面翻修。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對抽樣腳本加以全面翻修",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出極高的語意保真度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "語意保真度"
+    ],
+    "id": "L1-26"
+  },
+  {
+    "profile": "tech",
+    "text": "成長組本週將針對新戶引導頁進行 A/B testing，收集滿一萬筆樣本後再結案。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 A/B testing",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-27"
+  },
+  {
+    "profile": "tech",
+    "text": "成長組本週將針對新戶引導頁進行 A/B testing，收集滿一萬筆樣本後再結案。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 A/B testing",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "進行 A/B testing"
+    ],
+    "id": "L1-28"
+  },
+  {
+    "profile": "tech",
+    "text": "週二晚間主機房空調故障，機櫃溫度一路飆升。機房過熱迫使值班工程師緊急切斷兩台備援主機的電源，並立刻發信通知夜間客服暫緩公告恢復時間。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "機房過熱迫使值班工程師緊急切斷兩台備援主機的電源",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-29",
+    "known_gap": "無靈主語目前只認 NP+的+VN 主語；子句主語（迫使／讓）待規格決策"
+  },
+  {
+    "profile": "tech",
+    "text": "林工程師上個月剛完成新版資料倉儲壓測，原本打算這週五正式切換上線。不料雲端費率大幅調漲使得預估月費暴增四成，切換排程只好順延到下個月重審。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "雲端費率大幅調漲使得預估月費暴增四成",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-30"
+  },
+  {
+    "profile": "essay",
+    "text": "新版權限控管上線後，後台登入驗證流程比以往嚴格許多。這項政策調整使得審批流程明顯拉長，也讓日常作業不得不改為提前一天申請。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "這項政策調整使得審批流程明顯拉長",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "也讓日常作業不得不改為提前一天申請",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-31"
+  },
+  {
+    "profile": "tech",
+    "text": "客服團隊昨天已對退費流程作出全面檢討，但新版表單至今仍未被法務組核准。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對退費流程作出全面檢討",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "新版表單至今仍未被法務組核准",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-32"
+  },
+  {
+    "profile": "social",
+    "text": "由於講者的臨時請假，這場今年最受期待的講座之一不得不延後到下週三晚上。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "講者的臨時請假",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "最受期待的講座之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-33"
+  },
+  {
+    "profile": "tech",
+    "text": "客服收到退費申請後須先進行審查，若單筆金額超過五萬元，還須轉交風控主管再次進行審查。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行審查",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行審查",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": [],
+    "id": "L1-34"
+  },
+  {
+    "profile": "tech",
+    "text": "排查登入異常時，若日誌印出 `error: 憑證已被伺服器撤銷`，請勿重複發送請求；該帳號已於十分鐘前被管理員鎖定，須改由工單申請解鎖。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "該帳號已於十分鐘前被管理員鎖定",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "error: 憑證已被伺服器撤銷",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-35"
+  },
+  {
+    "profile": "tech",
+    "text": "若 CI 日誌出現 `對設定檔進行驗證` 這個階段名稱，代表腳本正在跑預設檢查；合併 PR 前，開發者仍須手動對設定檔進行驗證。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對設定檔進行驗證",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對設定檔進行驗證",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [],
+    "id": "L1-36"
+  }
+]
