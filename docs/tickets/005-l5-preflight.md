@@ -1,7 +1,7 @@
 # [TICKET-005] L5 預檢：疑似術語抽取與語體推測 (L5 Preflight)
 
 ## Status
-`pending`
+`done`
 
 ## Dependencies
 - Requires: #002 ✅, #003 ✅
@@ -10,13 +10,13 @@
 實作 `engine/rules/l5_preflight.py`：改文前的守門員預檢。掃描文章中未登錄的疑似專有名詞（`~性/~度/~化` 後綴詞與中英夾雜弱動詞結構），推測本文語體（tech/social/essay），輸出 §4.2 模式一的 `L5_PREFLIGHT` payload，供 `zh-l5-guard` Skill 與作者互動建立白名單。沒有這層，L1 規則會把「高可用性」「冪等性」等精確技術定義誤當偽術語拆解。
 
 ## Acceptance Criteria
-- [ ] 疑似術語抽取兩類 reason：
+- [x] 疑似術語抽取兩類 reason：
   - `SUFFIX_XING_UNREGISTERED`：帶「~性/~度/~化」後綴但未登錄於三級合併白名單的詞（附 count 與 sample_sentence）。
   - `CODE_SWITCH_WEAK_VERB`：弱動詞（進行/做/作出等）後接英文專有動作詞（如「進行 Fine-tuning」）。
-- [ ] 已登錄白名單詞（global/repo/local 合併後）不出現在 `suspect_terms_for_review`，並列入 `active_whitelist_terms`。
-- [ ] `suggested_profile` 依文本特徵自動推測（技術詞密度、中英夾雜比例、句長等），可被 CLI `--profile` 覆寫。
-- [ ] 輸出 JSON 與 §4.2 模式一 schema 一致：`mode: "L5_PREFLIGHT"`、`source_type`、`target_id`、`content_hash`、`suggested_profile`、`active_whitelist_terms`、`suspect_terms_for_review`。
-- [ ] `--stdin` 模式同樣可預檢（無 workspace，僅 global＋ephemeral 白名單）。
+- [x] 已登錄白名單詞（global/repo/local 合併後）不出現在 `suspect_terms_for_review`，並列入 `active_whitelist_terms`。
+- [x] `suggested_profile` 依文本特徵自動推測（技術詞密度、中英夾雜比例、句長等），可被 CLI `--profile` 覆寫。
+- [x] 輸出 JSON 與 §4.2 模式一 schema 一致：`mode: "L5_PREFLIGHT"`、`source_type`、`target_id`、`content_hash`、`suggested_profile`、`active_whitelist_terms`、`suspect_terms_for_review`。
+- [x] `--stdin` 模式同樣可預檢（無 workspace，僅 global＋ephemeral 白名單）。
 
 ## Design Reference
 - `zh_polish_skill_spec_v2.md` §2.5（L5 原理與領域誤傷）、§3.1（L5 守門員優先）、§4.2 模式一（payload schema）、§6.1（guard 互動流程）。
@@ -56,3 +56,6 @@
   - 遇到原文相鄰的「可＋單一動詞＋性」，以完整詞形參與候選計數與白名單比對。「可觀察性」可合計兩次，「可彈性調整」仍擷取「彈性」。
   - 語體判斷增加中文技術詞與口語線索。技術線索可由不同類別的詞互相佐證。口語線索採兩種獨立成詞的語氣詞，或表情符號搭配一個語氣詞。兩種語體都有明確線索時採備援設定，並在 `profile_reason` 列出雙方線索。明確的 `--profile` 優先。
   - `.venv/bin/python -m pytest -q` 共 130 項通過。獨立模型提供的原始案例 18/20 符合預期，將 L5-14、L5-15 換成補齊 Markdown 標記的對照後為 20/20。
+
+- 2026-11-19（合併驗收）
+  - 005 已合併至 `main`（`e16b605`），合併內容與通過 130 項測試的版本一致。驗收涵蓋檔案與 stdin 的預檢輸入、語體覆寫和含 `profile_reason` 的輸出。CLI 串接由 #006 接續。[PR #6](https://github.com/savourylie/wenqi/pull/6)

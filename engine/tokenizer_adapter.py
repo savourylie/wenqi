@@ -24,9 +24,10 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Protocol, Set, runtime_checkable
+from typing import Dict, Iterable, Iterator, List, Optional, Protocol, runtime_checkable
 
 import jieba
 import jieba.posseg as pseg
@@ -43,6 +44,20 @@ _WHITELIST_FREQ = 999999
 
 #: 白名單條目缺 pos 時的預設詞性（專有名詞），與 state_manager.DEFAULT_POS 一致。
 _DEFAULT_POS = "nz"
+LATIN_WORD_CHAR = r"[A-Za-z0-9_/‐‑-]"
+
+
+def whitelist_matches(text: str, terms: Iterable[str]) -> list[re.Match[str]]:
+    """比對作者確認的原文詞組，保留英文單詞邊界與原文字元座標。"""
+    hits = []
+    for term in dict.fromkeys(terms):
+        pattern = re.escape(term)
+        if re.fullmatch(LATIN_WORD_CHAR, term[0]):
+            pattern = rf"(?<!{LATIN_WORD_CHAR})" + pattern
+        if re.fullmatch(LATIN_WORD_CHAR, term[-1]):
+            pattern += rf"(?!{LATIN_WORD_CHAR})"
+        hits.extend(re.finditer(pattern, text))
+    return sorted(hits, key=lambda hit: hit.start())
 
 
 class TokenizerError(ValueError):
@@ -108,9 +123,8 @@ def _ensure_dictionary(dict_path: Path) -> None:
 class JiebaPosAdapter:
     """預設分詞器實作：``jieba.posseg`` ＋ 繁體優化詞表（§5.1A）。
 
-    初始化時載入繁體詞典（行程一次性），並可走訪合併白名單逐條
-    ``jieba.add_word(term, freq=999999, tag=pos)``，确保專有名詞不被拆碎；
-    分詞後以成員集合標記 ``is_frozen=True``。
+    初始化時載入繁體詞典（行程一次性），並逐條註冊合併白名單。
+    白名單詞組在原文中以完整範圍冷凍，其餘文字交給 Jieba 分詞。
     """
 
     def __init__(
@@ -120,7 +134,7 @@ class JiebaPosAdapter:
     ) -> None:
         self._dict_path = Path(dict_path) if dict_path is not None else TRADITIONAL_DICT_PATH
         _ensure_dictionary(self._dict_path)
-        self._frozen: Set[str] = set()
+        self._frozen: Dict[str, str] = {}
         if terms:
             self.register_whitelist(terms)
 
@@ -142,7 +156,7 @@ class JiebaPosAdapter:
             if not isinstance(pos, str) or not pos.strip():
                 raise TokenizerError(f"whitelist[{idx}]: pos 必須為非空字串")
             jieba.add_word(term, freq=_WHITELIST_FREQ, tag=pos)
-            self._frozen.add(term)
+            self._frozen[term] = pos
 
     def tokenize(self, text: str) -> List[Token]:
         """分詞並還原原句字元索引（含中英夾雜），標記 is_frozen。
@@ -153,7 +167,21 @@ class JiebaPosAdapter:
         """
         if not isinstance(text, str):
             raise TokenizerError("tokenize 輸入必須為字串")
+        hits = whitelist_matches(text, self._frozen)
+        hits.sort(key=lambda hit: (hit.start(), -len(hit[0])))
         tokens: List[Token] = []
+        cursor = 0
+        for hit in hits:
+            if hit.start() < cursor:
+                continue
+            tokens.extend(self._tokenize_plain_text(text[cursor:hit.start()], cursor))
+            tokens.append(Token(hit[0], self._frozen[hit[0]], hit.start(), hit.end(), True))
+            cursor = hit.end()
+        tokens.extend(self._tokenize_plain_text(text[cursor:], cursor))
+        return tokens
+
+    @staticmethod
+    def _tokenize_plain_text(text: str, offset: int) -> Iterator[Token]:
         cursor = 0
         for word, flag in pseg.cut(text):
             idx = text.find(word, cursor)
@@ -162,14 +190,5 @@ class JiebaPosAdapter:
                     f"字元索引還原失敗：{word!r} 於位置 {cursor} 之後找不到"
                 )
             end = idx + len(word)
-            tokens.append(
-                Token(
-                    surface=word,
-                    pos=flag,
-                    start_char=idx,
-                    end_char=end,
-                    is_frozen=word in self._frozen,
-                )
-            )
+            yield Token(word, flag, offset + idx, offset + end, False)
             cursor = end
-        return tokens
