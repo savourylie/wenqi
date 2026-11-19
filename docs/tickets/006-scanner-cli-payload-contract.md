@@ -4,7 +4,7 @@
 `blocked`
 
 ## Dependencies
-- Requires: #002, #004, #005
+- Requires: #002 ✅, #004, #005
 
 ## Description
 實作 `engine/ast_scanner.py` CLI 主入口：串接 state_manager、tokenizer、L0 與 L5 預檢，定義分句與 Diagnostic Payload 組裝邏輯，支援 §7 的完整參數介面。lint 模式先以可插拔的規則註冊機制回傳（此時 L1~L4 規則尚未實作，diagnostics 可為空但契約必須完整），使後續四層規則與六個 Skills 有穩定的輸出契約可依。
