@@ -350,6 +350,9 @@ wenqi/
 #### 4.2 Scanner 診斷輸出契約 (Diagnostic Payload JSON)
 
 ##### 模式一：`--mode preflight` (供 `zh-l5-guard` 使用)
+
+`profile_reason` 說明 `suggested_profile` 採用的正文線索、`--profile` 指定或備援設定。`active_whitelist_terms` 列出正文實際命中的生效白名單詞。`--stdin` 時，`source_type` 與 `target_id` 都為 `stdin`。
+
 ```json
 {
   "mode": "L5_PREFLIGHT",
@@ -357,6 +360,7 @@ wenqi/
   "target_id": "posts/2026-11-agent-memory.md",
   "content_hash": "8f3d9a12",
   "suggested_profile": "tech",
+  "profile_reason": "正文有 1 處弱動詞接英文詞。",
   "active_whitelist_terms": ["高可用性", "冪等性", "MemFuse"],
   "suspect_terms_for_review": [
     {
@@ -526,7 +530,7 @@ class TokenizerAdapter(Protocol):
   1. 檔案模式執行：`python3 engine/ast_scanner.py --mode preflight --file <target_path>`；無檔案對話模式透過 `stdin` 執行：`python3 engine/ast_scanner.py --mode preflight --stdin`。
   2. 解析輸出的 `L5_PREFLIGHT` JSON。
   3. 若 `suspect_terms_for_review` 非空或首次執行，向使用者發起單輪互動確認：
-     - 確認本文採用語體：`tech` / `social` / `essay`。
+     - 呈現 `suggested_profile` 與 `profile_reason`，請作者確認本文語體（`tech` / `social` / `essay`）。
      - 針對疑似專有名詞請使用者選擇作用域：
        - **[G] 全域永久豁免 (Global)**：呼叫 `--mode update-state --add-global-whitelist` 寫入 `~/.config/wenqi/global_config.json`。
        - **[L] 僅限本文/本專案豁免 (Local / Ephemeral)**：有檔案時寫入 `~/.config/wenqi/workspaces/<repo_hash>.json`；無檔案時於後續 CLI 透過 `--ephemeral-whitelist` 傳入。
