@@ -13,7 +13,10 @@ from typing import Iterable, Iterator, Literal, Sequence, TypedDict
 from .. import load_default_lexicons
 from ..l0_normalizer import normalize, visible_prose
 from ..state_manager import DEFAULT_PROFILE, content_hash, resolve_profile
-from ..tokenizer_adapter import LATIN_WORD_CHAR, Token, TokenizerAdapter, whitelist_matches
+from ..tokenizer_adapter import (
+    ENGLISH_ACTION_AFTER_VERB, LATIN_WORD, LATIN_WORD_CHAR, Token, TokenizerAdapter,
+    whitelist_matches,
+)
 
 _SUFFIXES = ("性", "度", "化")
 _SUFFIX_REASON = "SUFFIX_XING_UNREGISTERED (帶有『~性/~度/~化』後綴但未登錄於白名單)"
@@ -24,19 +27,7 @@ _NON_PREFIX_POS = {"p", "c", "u", "uj", "x", "m", "mq", "q"}
 _NUMERAL = r"(?:\d+|[〇零一二兩三四五六七八九十百千萬億兆幾數]+)"
 _DEGREE_QUANTITY = re.compile(rf"{_NUMERAL}度")
 _SENTENCE_BREAK = re.compile(r"[。！？!?]+|\.(?![A-Za-z0-9])|[\r\n]+")
-_ENGLISH_WORD = r"[A-Za-z][A-Za-z0-9]*(?:[-‐‑/][A-Za-z0-9]+)*"
-_ENGLISH_WORDS = re.compile(rf"(?<!{LATIN_WORD_CHAR}){_ENGLISH_WORD}(?!{LATIN_WORD_CHAR})")
-_HORIZONTAL_SPACE = r"[ \t\u3000]"
-_TEMPORAL_CONNECTOR = rf"(?i:before|after){_HORIZONTAL_SPACE}"
-_BEFORE_AND_AFTER = (
-    rf"(?i:before{_HORIZONTAL_SPACE}+and{_HORIZONTAL_SPACE}+after)(?!{LATIN_WORD_CHAR})"
-)
-_ENGLISH_PHRASE = (
-    rf"(?:{_BEFORE_AND_AFTER}|{_ENGLISH_WORD})"
-    rf"(?:{_HORIZONTAL_SPACE}+(?!{_TEMPORAL_CONNECTOR}){_ENGLISH_WORD})*"
-)
-_ASPECT = rf"(?:{_HORIZONTAL_SPACE}*[了過著])?"
-_REPETITIONS = rf"(?:{_HORIZONTAL_SPACE}*{_NUMERAL}次)?"
+_ENGLISH_WORDS = re.compile(rf"(?<!{LATIN_WORD_CHAR}){LATIN_WORD}(?!{LATIN_WORD_CHAR})")
 
 _TECH_TERM_SHARE = 0.04
 _TECH_ENGLISH_SHARE = 0.20
@@ -120,10 +111,7 @@ def _code_switch_hits(
 ) -> list[re.Match[str]]:
     # 「做」見於 §2.5 的「做一次 Benchmark」，也屬 L5 的候選起點。
     verbs = "|".join(map(re.escape, (*weak_verbs, "做")))
-    pattern = re.compile(
-        rf"(?:{verbs}){_ASPECT}{_REPETITIONS}{_HORIZONTAL_SPACE}*"
-        rf"{_ENGLISH_PHRASE}(?!{LATIN_WORD_CHAR})"
-    )
+    pattern = re.compile(rf"(?:{verbs}){ENGLISH_ACTION_AFTER_VERB}")
     token_starts = {token.start_char for token in tokens}
     return [match for match in pattern.finditer(prose) if match.start() in token_starts]
 

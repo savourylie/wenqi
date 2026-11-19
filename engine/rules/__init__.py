@@ -4,13 +4,20 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from importlib import import_module
-from typing import TYPE_CHECKING, Callable, Iterator, Sequence, TypedDict
+from typing import TYPE_CHECKING, Callable, Iterator, Literal, Sequence, TypedDict
 
 if TYPE_CHECKING:
     from ..tokenizer_adapter import Token
 
 
-class Issue(TypedDict):
+class _IssueDetails(TypedDict, total=False):
+    char_idx: int
+    severity: Literal["info"]
+    # 僅供 Scanner 彙整句內必留詞，輸出 JSON 時移除。
+    _replaceable_token_starts: tuple[int, ...]
+
+
+class Issue(_IssueDetails):
     layer: str
     rule_id: str
     priority: int

@@ -85,7 +85,9 @@ def _rule_profile(settings: dict) -> RuleProfile:
     }
 
 
-def _must_keep_words(tokens: Sequence[Token], text: str, replaceable_words: set[str]) -> list[str]:
+def _must_keep_words(
+    tokens: Sequence[Token], text: str, replaceable_words: set[str], replacements: set[int]
+) -> list[str]:
     frame_heads = {match.start("noun") for match in _FRAME_HEAD.finditer(text)}
     return list(dict.fromkeys(
         token.surface
@@ -94,12 +96,12 @@ def _must_keep_words(tokens: Sequence[Token], text: str, replaceable_words: set[
             (token.pos.startswith(("n", "v")) or token.pos in {"a", "an"})
             and token.surface not in replaceable_words
             and token.start_char not in frame_heads
+            and token.start_char not in replacements
         )
     ))
 
 
 class _L0Diagnostic(Issue):
-    char_idx: int
     suggestion: str
 
 
@@ -177,9 +179,30 @@ def lint(text: str, settings: dict, *, requested_layer: str = "ALL") -> dict:
         if not issues:
             continue
         issues.sort(key=lambda issue: issue["priority"])
+        replacements = {
+            start for issue in issues for start in issue.get("_replaceable_token_starts", ())
+        }
+        must_keep = _must_keep_words(tokens, scanned_text, replaceable_words, replacements)
+        preserved = set(must_keep)
+        kept_replacements = {
+            token.start_char: token.surface for token in tokens
+            if token.start_char in replacements and token.surface in preserved
+        }
+        public_issues: list[Issue] = []
         for issue in issues:
             layer = issue["layer"]
             issue_counts[layer] = issue_counts.get(layer, 0) + 1
+            # 若同一原詞在句中其他位置仍須保留，改用可遵守的指令。
+            if "_replaceable_token_starts" in issue:
+                issue = issue.copy()
+                blocked = dict.fromkeys(
+                    kept_replacements[start] for start in issue.pop("_replaceable_token_starts")
+                    if start in kept_replacements
+                )
+                if blocked:
+                    words = "、".join(f"「{word}」" for word in blocked)
+                    issue["instruction"] = f"保留{words}的原字，可調整「{issue['span']}」的語序。"
+            public_issues.append(issue)
 
         diagnostics.append({
             "sentence_id": f"L{line}_S{line_sentences[line]}",
@@ -190,7 +213,7 @@ def lint(text: str, settings: dict, *, requested_layer: str = "ALL") -> dict:
             "frozen_whitelist_hits": list(dict.fromkeys(
                 token.surface for token in tokens if token.is_frozen
             )),
-            "must_keep_content_words": _must_keep_words(tokens, scanned_text, replaceable_words),
+            "must_keep_content_words": must_keep,
             "de_normalization_map": [
                 {
                     "char_idx": token.start_char,
@@ -200,7 +223,7 @@ def lint(text: str, settings: dict, *, requested_layer: str = "ALL") -> dict:
                 for token in tokens
                 if token.true_de_role
             ],
-            "issues": issues,
+            "issues": public_issues,
         })
 
     return {

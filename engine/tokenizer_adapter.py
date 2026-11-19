@@ -29,7 +29,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Protocol, runtime_checkable
 
-import jieba
 import jieba.posseg as pseg
 
 logger = logging.getLogger(__name__)
@@ -39,12 +38,22 @@ TRADITIONAL_DICT_PATH = (
     Path(__file__).resolve().parent.parent / "config" / "jieba_dict_traditional.txt"
 )
 
-#: 白名單詞註冊頻率：確保專有名詞不被拆碎（§5.1A）。
-_WHITELIST_FREQ = 999999
-
 #: 白名單條目缺 pos 時的預設詞性（專有名詞），與 state_manager.DEFAULT_POS 一致。
 _DEFAULT_POS = "nz"
 LATIN_WORD_CHAR = r"[A-Za-z0-9_/‐‑-]"
+LATIN_WORD = r"[A-Za-z][A-Za-z0-9]*(?:[-‐‑/][A-Za-z0-9]+)*"
+_HORIZONTAL_SPACE = r"[ \t\u3000]"
+_TEMPORAL_CONNECTOR = rf"(?i:before|after){_HORIZONTAL_SPACE}"
+_BEFORE_AND_AFTER = (
+    rf"(?i:before{_HORIZONTAL_SPACE}+and{_HORIZONTAL_SPACE}+after)(?!{LATIN_WORD_CHAR})"
+)
+ENGLISH_ACTION_AFTER_VERB = (
+    rf"(?:{_HORIZONTAL_SPACE}*[了過著])?"
+    rf"(?:{_HORIZONTAL_SPACE}*(?:\d+|[〇零一二兩三四五六七八九十百千萬億兆幾數]+)次)?"
+    rf"{_HORIZONTAL_SPACE}*(?:{_BEFORE_AND_AFTER}|{LATIN_WORD})"
+    rf"(?:{_HORIZONTAL_SPACE}+(?!{_TEMPORAL_CONNECTOR}){LATIN_WORD})*"
+    rf"(?!{LATIN_WORD_CHAR})"
+)
 
 
 def whitelist_matches(text: str, terms: Iterable[str]) -> list[re.Match[str]]:
@@ -139,13 +148,14 @@ class JiebaPosAdapter:
             self.register_whitelist(terms)
 
     def register_whitelist(self, terms: List[dict]) -> None:
-        """註冊白名單：逐條 add_word（高頻＋指定詞性）並記入冷凍集合。
+        """把原文詞組與指定詞性註冊到這個 adapter。
 
         可多次呼叫增量註冊；同詞條覆寫詞性。條目須含非空 ``term``；``pos``
         缺省補 ``nz``。無效條目拋 ``TokenizerError``。
         """
         if not isinstance(terms, list):
             raise TokenizerError("白名單必須為 List[dict]")
+        entries: dict[str, str] = {}
         for idx, entry in enumerate(terms):
             if not isinstance(entry, dict):
                 raise TokenizerError(f"whitelist[{idx}]: 條目必須為物件")
@@ -155,8 +165,9 @@ class JiebaPosAdapter:
             pos = entry.get("pos", _DEFAULT_POS)
             if not isinstance(pos, str) or not pos.strip():
                 raise TokenizerError(f"whitelist[{idx}]: pos 必須為非空字串")
-            jieba.add_word(term, freq=_WHITELIST_FREQ, tag=pos)
-            self._frozen[term] = pos
+            entries[term] = pos
+        # tokenize 依原文範圍組成冷凍 token，讓單篇詞組與詞性留在本實例。
+        self._frozen.update(entries)
 
     def tokenize(self, text: str) -> List[Token]:
         """分詞並還原原句字元索引（含中英夾雜），標記 is_frozen。

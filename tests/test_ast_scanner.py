@@ -292,6 +292,25 @@ def test_lint_registered_layers_share_one_diagnostic_and_filter_rules(state_dir,
     assert [issue["layer"] for issue in l1_only["diagnostics"][0]["issues"]] == ["L1"]
 
 
+def test_lint_l1_cli_uses_rules_and_ephemeral_whitelist(state_dir):
+    text = "他不被准許入學。團隊進行 Fine-tuning。"
+    result = payload(run_cli("--mode", "lint", "--layer", "L1", "--stdin", text=text))
+    first, second = result["diagnostics"]
+    issue, = first["issues"]
+    assert (issue["rule_id"], issue["char_idx"], issue["span"]) == ("L1_PASSIVE_BEI", 1, "不被准許")
+    assert "未獲准" in issue["instruction"]
+    assert first["must_keep_content_words"] == ["入學"]
+    assert second["issues"][0]["severity"] == "info"
+    assert result["summary"]["issue_counts"]["L1"] == 2
+
+    protected = payload(run_cli(
+        "--mode", "lint", "--layer", "L1", "--stdin",
+        "--ephemeral-whitelist", "准許,進行 Fine-tuning", text=text,
+    ))
+    assert protected["diagnostics"] == []
+    assert protected["summary"]["flagged_sentences"] == 0
+
+
 def test_lint_keeps_unpunctuated_prose_across_block_boundaries(state_dir):
     text = "> 引文應略過。\n第一段沒句號\n~~~\n略過！\n~~~\n第二段沒句號\n\n第三段。"
     result = payload(run_cli("--mode", "lint", "--stdin", text=text))
