@@ -1,0 +1,5 @@
+# 自訂繁體詞條（word freq pos）。build_traditional_dict.py 於 jieba 內建詞典
+# 轉換後覆寫合併；同詞條以本檔為準。用於補 jieba 缺詞或修正錯誤併詞。
+來襲 60 v
+提早來襲 60 v
+持續上升 1 v

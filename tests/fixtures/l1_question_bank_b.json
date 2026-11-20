@@ -1,0 +1,943 @@
+[
+  {
+    "id": "L1-37",
+    "profile": "tech",
+    "text": "資料庫團隊昨晚已對舊版分表架構進行分析，準備在下週提出搬遷方案。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對舊版分表架構進行分析",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-38",
+    "profile": "essay",
+    "text": "那年冬季的連日暴雪造成三十四人死亡，山區多條聯外道路直到隔年開春才恢復通行。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "造成三十四人死亡",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-39",
+    "profile": "social",
+    "text": "策展團隊將於週五前針對貴賓訪客名單展開全面評估，再決定是否加開夜間場次。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "針對貴賓訪客名單展開全面評估",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-40",
+    "profile": "social",
+    "text": "社區志工一早便在廟口廣場展開遮陽棚，也順手替攤商接好臨時電源。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "展開遮陽棚",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-41",
+    "profile": "tech",
+    "text": "深夜爆裂的冷卻水管造成二樓配電室嚴重滲水，工務人員已先切斷該區迴路。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "造成二樓配電室嚴重滲水",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-42",
+    "profile": "essay",
+    "text": "這位建築史學者仔細查閱了日治時期的建築藍圖，對地方文史研究貢獻很大，講座現場反應十分熱烈。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "貢獻很大",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-43",
+    "profile": "tech",
+    "text": "系統說明書將預設排程命名為 `對帳務報表進行驗證`，實際上每晚十二點會自動核對總額並寫入紀錄。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對帳務報表進行驗證",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-44",
+    "profile": "essay",
+    "text": "颱風的提早來襲打亂了離島船班表，碼頭候船室一早擠滿改票旅客。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "颱風的提早來襲",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-45",
+    "profile": "social",
+    "text": "搬進新家前，兩人花了整整兩個週末討論廚具的選購，就怕流理台動線不順手。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "廚具的選購",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-46",
+    "profile": "tech",
+    "text": "由於多區域備援節點的緊急部署，週末例行備份任務順延兩小時才啟動。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "多區域備援節點的緊急部署",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-47",
+    "profile": "essay",
+    "text": "我的評估是先把預算留給門市改裝，等暑假旺季過後再談新分店選址。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "我的評估",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-48",
+    "profile": "tech",
+    "text": "上週剛部署的風控規則擋下了大量異常刷卡，商家端幾乎沒有收到偽冒客訴。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "上週剛部署的風控規則",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-49",
+    "profile": "social",
+    "text": "新進店員熟練地整理好烘焙架，連吧檯器具也維護得相當妥善，熟客進門都很放心。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "熟練地整理",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "維護得相當妥善",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-50",
+    "profile": "tech",
+    "text": "> 由於主機房的臨時斷電與核心資料庫的緊急部署，舊版報表已暫停匯出。\n\n上述為去年事故檢討原文，目前機房已改接雙迴路供電，不會再發生單點中斷。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "核心資料庫的緊急部署",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-51",
+    "profile": "social",
+    "text": "這家老字號餅舖在中部具有極高的知名度，每逢中秋前夕總要提前兩週預訂。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具有極高的知名度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-52",
+    "profile": "essay",
+    "text": "這首小提琴協奏曲的第三樂章屬於難度很高的曲目，獨奏家卻拉得游刃有餘。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "難度很高的",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-53",
+    "profile": "tech",
+    "text": "這份自動產出的介面說明檔並不具有足夠的可讀性，新進工程師往往得直接翻原始碼。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "並不具有足夠的可讀性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-54",
+    "profile": "tech",
+    "text": "這批新裝設的霧燈具有清晰的能見度，濃霧天開在山路上安心許多。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具有清晰的能見度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-55",
+    "profile": "tech",
+    "text": "這套光學量測儀器在低溫環境下仍能維持高準確度，不需頻繁重新校正。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "維持高準確度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-56",
+    "profile": "essay",
+    "text": "這本散文集文字簡練、節奏明快，讀起來引人入勝，很適合在長途火車上細讀。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-57",
+    "profile": "tech",
+    "text": "新版事件匯流排具備高度的可擴展性，雙十一流量暴增時只需加開節點即可消化。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備高度的可擴展性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-58",
+    "profile": "social",
+    "text": "感謝各位讀者們週末冒雨來到獨立書店，新書分享會現場幾乎座無虛席。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "讀者們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-59",
+    "profile": "essay",
+    "text": "這座建於清末的紅磚煙囪是中部保存相當完整的工業遺址之一。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-60",
+    "profile": "social",
+    "text": "作為今年秋季開發者年會議程之一的資料庫調校實戰工作坊，開放報名十分鐘就額滿。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "作為今年秋季開發者年會議程之一的資料庫調校實戰工作坊",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-61",
+    "profile": "social",
+    "text": "淨灘活動結束後，志工們和鄰居們合力把成袋寶特瓶搬上環保車，臉上滿是笑容。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "志工們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "鄰居們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-62",
+    "profile": "essay",
+    "text": "這間隱身在老城巷弄的手沖咖啡館口碑極佳，淺焙衣索比亞尤其受到常客青睞。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-63",
+    "profile": "tech",
+    "text": "改用壓縮編碼後，每日冷資料備份所佔用的儲存空間縮減為原本的三分之一，傳輸時間也大幅縮短。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "三分之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-64",
+    "profile": "essay",
+    "text": "矗立在東北角礁岩上的三貂角燈塔，是這趟環島公路旅行必訪的五座燈塔之一。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "五座燈塔之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-65",
+    "profile": "essay",
+    "text": "手工松煙墨條向來是文房四寶之一，老師傅至今仍堅持以古法拌膠捶打。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "文房四寶之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-66",
+    "profile": "essay",
+    "text": "資金的長期缺乏迫使獨立書店老闆縮減營業時間，週末也改由自己顧店。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "資金的長期缺乏迫使獨立書店老闆縮減營業時間",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-67",
+    "profile": "social",
+    "text": "排班表的臨時變動帶給門市人員不小困擾，許多兼職同事來不及調整交通安排。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "排班表的臨時變動帶給門市人員不小困擾",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-68",
+    "profile": "essay",
+    "text": "轉機櫃檯的漫長等待讓現場旅客感到精疲力竭，不少人乾脆席地而坐。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "轉機櫃檯的漫長等待讓現場旅客感到精疲力竭",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-69",
+    "profile": "tech",
+    "text": "收單銀行臨時限額迫使金流工程師連夜切換備援通道，才沒影響凌晨結算。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "收單銀行臨時限額迫使金流工程師連夜切換備援通道",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-70",
+    "profile": "tech",
+    "text": "分區表的頻繁變動使得單月快照容量暴增三成，備份窗口也跟著拉長。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "分區表的頻繁變動",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "分區表的頻繁變動使得單月快照容量暴增三成",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-71",
+    "profile": "essay",
+    "text": "因海外紙漿價格大幅上漲，出版社決定把這套精裝書改為接單印製。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "因海外紙漿價格大幅上漲",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-72",
+    "profile": "social",
+    "text": "門市店長每天都會留意庫存變動，一旦發現熱門品項快賣完，就立刻聯繫倉庫補貨。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-73",
+    "profile": "tech",
+    "text": "訊息佇列的異常等待讓值班工程師立刻切到備用節點，免得訂單通知大塞車。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "訊息佇列的異常等待",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "訊息佇列的異常等待讓值班工程師立刻切到備用節點",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-74",
+    "profile": "tech",
+    "text": "這份跨國匯款申請今早已被合規專員拒絕，客戶須補附資金來源證明。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "這份跨國匯款申請今早已被合規專員拒絕",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-75",
+    "profile": "social",
+    "text": "設計組提交的深色模式草案並沒有被採用，下週會議還得重新提案。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "並沒有被採用",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-76",
+    "profile": "essay",
+    "text": "這起冷鏈貨櫃失溫客訴在週會上被歸類為重大品質異常，倉儲部須於三日內提交改善計畫。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被歸類為重大品質異常",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-77",
+    "profile": "tech",
+    "text": "法務團隊昨天駁回了這項資料共享方案，同時要求業務單位補齊授權條款。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "駁回了這項資料共享方案",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-78",
+    "profile": "essay",
+    "text": "這件老屋翻新計畫上月已獲評審團採用，下季起將由在地木工團隊進場施作。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "已獲評審團採用",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-79",
+    "profile": "social",
+    "text": "這間山城民宿替房客準備了蓬鬆的羽絨被，就算山區半夜降溫也能一覺到天亮。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "羽絨被",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-80",
+    "profile": "essay",
+    "text": "這座建於日治時期的木造火車站多年前在颱風夜被毀，如今原址只剩一座紀念石碑。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被毀",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-81",
+    "profile": "essay",
+    "text": "小說中這位剛直的御史在捲入鹽稅弊案後慘遭陷害，最後在流放途中被殺，令讀者唏噓不已。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被殺",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-82",
+    "profile": "tech",
+    "text": "新版開發指南比舊版更具實用性，文件組昨天也已對錯誤碼章節進行了全面翻修。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "更具實用性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對錯誤碼章節進行了全面翻修",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-83",
+    "profile": "tech",
+    "text": "由於海運貨櫃的頻繁逾時，這批秋季新品檔期已被營運主管延後了。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "海運貨櫃的頻繁逾時",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "這批秋季新品檔期已被營運主管延後了",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-84",
+    "profile": "social",
+    "text": "月台班次的臨時變動讓候車乘客感到相當無奈，不僅乘客們紛紛改搭接駁車，原定的補償方案至今仍未被核准。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "月台班次的臨時變動讓候車乘客感到相當無奈",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "乘客們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "至今仍未被核准",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-85",
+    "profile": "tech",
+    "text": "為避免影響日間交易，帳務組將核心帳本的夜間盤點排在每週日凌晨三點執行。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "核心帳本的夜間盤點",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-86",
+    "profile": "tech",
+    "text": "為避免影響日間交易，帳務組將核心帳本的夜間盤點排在每週日凌晨三點執行。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "核心帳本的夜間盤點",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "核心帳本的夜間盤點"
+    ]
+  },
+  {
+    "id": "L1-87",
+    "profile": "tech",
+    "text": "這套音訊壓縮演算法呈現出極低的計算複雜度，在低階穿戴裝置上也能即時運作。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出極低的計算複雜度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-88",
+    "profile": "tech",
+    "text": "這套音訊壓縮演算法呈現出極低的計算複雜度，在低階穿戴裝置上也能即時運作。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出極低的計算複雜度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "計算複雜度"
+    ]
+  },
+  {
+    "id": "L1-89",
+    "profile": "essay",
+    "text": "推薦引擎的突然變動讓內容編輯連夜重排首頁專題，差點趕不上清晨截稿。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "推薦引擎的突然變動讓內容編輯連夜重排首頁專題",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-90",
+    "profile": "tech",
+    "text": "推薦引擎的突然變動讓內容編輯連夜重排首頁專題，差點趕不上清晨截稿。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "推薦引擎的突然變動",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "推薦引擎的突然變動讓內容編輯連夜重排首頁專題",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-91",
+    "profile": "tech",
+    "text": "模型團隊預計本週四以客服對話語料進行 Fine-tuning，改善商品退換貨問答品質。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 Fine-tuning",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-92",
+    "profile": "tech",
+    "text": "模型團隊預計本週四以客服對話語料進行 Fine-tuning，改善商品退換貨問答品質。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 Fine-tuning",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "進行 Fine-tuning"
+    ]
+  },
+  {
+    "id": "L1-93",
+    "profile": "essay",
+    "text": "每當梅雨季來臨，人們總愛窩在巷口老茶館喝熱茶，聊起年輕時的故事，人們臉上自然浮現笑意。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "人們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "人們",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-94",
+    "profile": "tech",
+    "text": "簽核系統在狀態欄顯示 `被否決` 時代表初審退件，若複審結果同樣顯示提案被否決，申請人就必須重新送件。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被否決",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被否決",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-95",
+    "profile": "essay",
+    "text": "清晨六點走進台南菜市場，巷口牛肉湯攤前早已排起長龍。老闆俐落地切下溫體牛肉，淋上滾燙牛骨高湯，端上桌時肉片仍透著淡淡粉紅。配上一碗淋滿肉燥的白飯，整趟早起散步頓時值回票價。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "L1-96",
+    "profile": "tech",
+    "text": "值班工程師昨晚九點接獲告警，立刻登入監控面板查看節點負載。排查半小時後，團隊確認異常源頭是排程腳本漏設重試上限，導致連線池瞬間塞滿。修正程式上線後，系統回應時間在五分鐘內恢復正常，隔日早會也補齊了單元測試。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  }
+]

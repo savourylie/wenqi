@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 from bisect import bisect_left
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Iterator, Sequence
 
@@ -43,7 +43,7 @@ _DEATH_TOLL = re.compile(rf"\s*(?P<count>{_NUMBER}人)(?P<event>死亡)")
 _REPETITIONS = re.compile(rf"{_NUMBER}次")
 _WEAK_ACTIONS = {
     "研究", "貢獻", "討論", "分析", "評估", "反應", "試驗", "優化", "處理", "測試", "死亡", "幫助",
-    "翻修", "檢討", "驗證", "觀察", "記錄", "肯定", "說明",
+    "翻修", "檢討", "驗證", "觀察", "記錄", "肯定", "說明", "備份", "清理", "回應", "查詢",
 }
 _WEAK_MODIFIERS = ("深入", "詳細", "仔細", "全面", "進一步", "逐一", "徹底")
 _MODIFIED_ACTION = re.compile(
@@ -211,6 +211,9 @@ def _weak_target(clause: _Clause, index: int, verb: re.Match[str]) -> _WeakTarge
     return None
 
 
+_MERGED_PREPOSITION = re.compile(r"[已將曾先再也都就才並只僅還又便即]對")
+
+
 def _preposed_phrase(clause: _Clause, index: int, weak: re.Pattern[str]) -> Token | None:
     # 遇到連詞或另一個弱動詞時停止往前延伸。
     for previous in range(index - 1, -1, -1):
@@ -220,6 +223,11 @@ def _preposed_phrase(clause: _Clause, index: int, weak: re.Pattern[str]) -> Toke
         if token.pos == "p" and token.surface in _PREPOSED:
             if previous < index - 1 and not token.is_frozen:
                 return token
+            break
+        # 「已對錯誤碼章節進行…」：介詞「對」被 Jieba 併入副詞成一個 d 詞。
+        if _MERGED_PREPOSITION.fullmatch(token.surface) and not token.is_frozen:
+            if previous < index - 1:
+                return replace(token, surface="對", pos="p", start_char=token.end_char - 1)
             break
     return None
 
@@ -283,24 +291,31 @@ def _weak_issues(clause: _Clause, lexicons: _Lexicons) -> Iterator[Issue | None]
         )
 
 
-_CHANGE_EVENTS = {"減少", "增加", "出現", "改變", "發展", "驅使", "缺乏", "變動", "掉包", "等待"}
+_CHANGE_EVENTS = {"減少", "增加", "出現", "改變", "發展", "驅使", "缺乏", "變動", "掉包", "等待", "重啟", "調漲"}
 _SUBJECT_EVENTS = _CHANGE_EVENTS | {
-    "坍方", "來襲", "將至", "到來", "發生", "倒塌", "上升", "下降", "消失", "逾時", "請假", "出貨",
+    "坍方", "來襲", "將至", "到來", "發生", "倒塌", "上升", "下降", "消失", "逾時", "請假", "出貨", "退件",
 }
 _OBJECT_EVENTS = {
     "選購", "推行", "推廣", "設計", "開發", "實施", "維護", "研究", "檢查", "優化",
     "編輯", "整理", "採購", "測試", "分析", "處理", "保護", "評估", "發布", "安裝",
-    "繼續",
+    "繼續", "匯出",
 }
 _EVENT_HEADS = _SUBJECT_EVENTS | _OBJECT_EVENTS | {"盤點", "部署"}
 _EVENT_MODIFIER_POS = {"a", "ad", "b", "d"}
 # 「接連／陸續」可被 Jieba 標為 v，仍是事件修飾語而非事件頭。
-_EVENT_MODIFIER_WORDS = {"接連", "陸續"}
+# 時間修飾語（夜間盤點）逐詞列入：逾時等事件頭本身可被標 t，不能整類放行。
+_EVENT_MODIFIER_WORDS = {
+    "接連", "陸續", "漫長", "未", "授權", "持續", "夜間", "日間", "凌晨", "深夜", "清晨", "上午", "下午", "晚間", "平日", "假日", "週末",
+}
+# 「延遲」等詞也能單獨作事件頭。後接已知事件詞時才視為修飾語。
+_CONTEXTUAL_EVENT_MODIFIERS = {"延遲", "集中", "反覆"}
 _APPLICATION_NOUNS = {"申請", "退款", "退費"}
+_APPLICATION_MODIFIERS = {"退款", "退費", "退貨"}
+_SEASON_MODIFIERS = {"春季", "夏季", "秋季", "冬季", "雨季", "旱季"}
 # 常構成複合名詞的動詞修飾語（客服回應速度、處理流程）。
 _NP_MODIFIER_VERBS = {
     "回應", "服務", "管理", "控制", "支援", "存取", "搜尋", "驗證", "同步", "監控",
-    "備份", "連線", "處理", "測試", "開發", "維運", "營運",
+    "備份", "連線", "處理", "測試", "開發", "維運", "營運", "備援", "推薦", "排班", "付款",
 }
 _GROUP_NOUN = re.compile(r"第?[0-9〇零一二兩三四五六七八九十百]+[組隊批群班]")
 _LATIN_HEAD = re.compile(r"[A-Za-z][A-Za-z0-9]*(?:[-/][A-Za-z0-9]+)*")
@@ -329,9 +344,23 @@ def _has_predicate_cue(tokens: Sequence[Token], index: int) -> bool:
     )
 
 
+def _is_application_head(tokens: Sequence[Token], index: int) -> bool:
+    # 「退貨申請」可被切成兩個動詞，在這裡是申請的類別。
+    return (
+        index > 0
+        and tokens[index].surface == "申請"
+        and tokens[index - 1].surface in _APPLICATION_MODIFIERS
+    )
+
+
 def _noun_phrase_start(tokens: Sequence[Token], index: int) -> int:
+    head = index
     while index > 0:
         previous = tokens[index - 1]
+        # 「帳務／組將／核心帳本」：把字句的「將」被 Jieba 併入前詞時，
+        # NP 向左止於其前（麻將等名詞除外）。
+        if len(previous.surface) > 1 and previous.surface.endswith("將") and previous.surface != "麻將":
+            break
         if previous.pos == "r" and previous.surface.startswith(_DETERMINERS):
             return index - 1
         if previous.true_de_role == DE_ATTR and index >= 2:
@@ -341,15 +370,17 @@ def _noun_phrase_start(tokens: Sequence[Token], index: int) -> int:
                 continue
         if previous.pos == "vn" and _has_predicate_cue(tokens, index - 1):
             break
-        # Jieba 可將「退款／申請」標為兩個 v，或將「通勤」標為 j。
-        application = previous.surface in _APPLICATION_NOUNS and tokens[index].surface == "申請"
-        if _noun_head(previous) or previous.pos in {"a", "an", "b", "j", "m", "mq", "q"} or application:
+        season = previous.pos == "t" and previous.surface in _SEASON_MODIFIERS
+        if (_noun_head(previous) or previous.pos in {"a", "an", "b", "j", "m", "mq", "q"}
+                or season or _is_application_head(tokens, index)):
             index -= 1
             continue
         # 「客服／回應／速度」：複合名詞內的動詞修飾語仍屬同一 NP；
         # 只認常見複合動詞，避免把「完成資料庫的遷移」的謂語「完成」吞進 span。
-        if (previous.pos == "v" and previous.surface in _NP_MODIFIER_VERBS
-                and _noun_head(tokens[index])):
+        # 「跨」在「跨站點退貨申請」中修飾中心語前的範圍。
+        cross_scope = previous.surface == "跨" and index < head
+        if (previous.pos == "v" and (previous.surface in _NP_MODIFIER_VERBS or cross_scope)
+                and _noun_head(tokens[index]) and not _has_predicate_cue(tokens, index - 1)):
             index -= 1
             continue
         # 「本批預購商品」的量詞框架可確認「預購」修飾名詞。
@@ -377,6 +408,7 @@ def _events(tokens: Sequence[Token]) -> Iterator[_Event]:
             _noun_head(left)
             or (left.pos == "m" and _GROUP_NOUN.fullmatch(left.surface))
             or _LATIN_HEAD.fullmatch(left.surface) is not None
+            or _is_application_head(tokens, index - 1)
         )
         if marker.true_de_role not in {DE_ATTR, DE_ADV} or not (
             noun_head or left.surface in _APPLICATION_NOUNS
@@ -392,9 +424,11 @@ def _events(tokens: Sequence[Token]) -> Iterator[_Event]:
             if (term.pos in _EVENT_MODIFIER_POS or term.surface in _EVENT_MODIFIER_WORDS) and term.surface != "將":
                 right += 1
                 continue
-            # 「統一出貨」的「統一」修飾後面的動作。
-            if (term.surface == "統一" and right + 1 < len(tokens)
-                    and tokens[right + 1].pos in {"v", "vn"}):
+            following = tokens[right + 1:right + 2]
+            if following and (
+                (term.surface in _CONTEXTUAL_EVENT_MODIFIERS and following[0].surface in _EVENT_HEADS)
+                or (term.surface == "統一" and following[0].pos in {"v", "vn"})
+            ):
                 right += 1
                 continue
             break
@@ -407,7 +441,8 @@ def _events(tokens: Sequence[Token]) -> Iterator[_Event]:
         # 「申請」一類的 v 可作處理對象，須有已知動賓句型佐證。
         if not noun_head and verb not in _OBJECT_EVENTS:
             continue
-        if verb not in _EVENT_HEADS and tokens[right].pos not in {"v", "vn"}:
+        # 「老礦工的生活」中的「生活」是名詞，詞典可能標為 vn。
+        if verb not in _EVENT_HEADS and (tokens[right].pos not in {"v", "vn"} or verb == "生活"):
             continue
         following = tokens[right + 1:right + 2]
         # 「維護流程／處理進度」的末詞仍是名詞或被 Jieba 標成 d。
@@ -458,8 +493,9 @@ def _human_reference(token: Token) -> bool:
         _HUMAN_PRONOUN.fullmatch(token.surface)
         or token.pos.startswith("nr")
         or (token.pos.startswith("n") and (
-            token.surface.endswith(("人", "者", "員", "生", "師", "戶", "眾"))
+            token.surface.endswith(("人", "者", "員", "生", "師", "戶", "眾", "客"))
             or token.surface.endswith("客服")
+            or token.surface in {"老闆", "編輯", "店主", "主管"}
         ))
     )
 
@@ -484,12 +520,21 @@ def _inanimate_issues(
         patient = predicate + 1
         if patient < len(tokens) and tokens[patient].surface in _ASPECT:
             patient += 1
-        # 「一線客服」的數量／區別修飾語不影響受詞是否為人。
-        while patient < len(tokens) and tokens[patient].pos in {"m", "mq", "q"}:
-            patient += 1
-        if patient == len(tokens) or not _human_reference(tokens[patient]):
+        # 人稱受詞可能帶定語（獨立書店老闆／門市人員／候車乘客）：向前找
+        # 人稱中心語，遇謂語邊界（名詞後接動詞）或虛詞即止，最多六個詞。
+        person_head = None
+        for offset in range(patient, min(patient + 6, len(tokens))):
+            token = tokens[offset]
+            if _human_reference(token):
+                person_head = offset
+                break
+            if token.pos in {"c", "p", "y", "o", "e", "ud", "uv"} or token.surface in _ASPECT:
+                break
+            if token.pos in {"v", "vn"} and offset > patient and tokens[offset - 1].pos.startswith("n"):
+                break
+        if person_head is None:
             continue
-        person = clause.source[tokens[predicate + 1].start_char:tokens[patient].end_char]
+        person = clause.source[tokens[patient].start_char:tokens[person_head].end_char]
         yield _issue(
             clause, _INANIMATE, start, tokens[-1].end_char, "NP + DE_ATTR + VN + 使動動詞 + 人稱受詞",
             f"改寫這個分句時，以「{person}」作主詞，用「因為{noun}{action}」交代原因，"
@@ -505,8 +550,9 @@ _JARGON_HEAD_DEGREE = {"更具": "更", "頗具": "頗"}
 _ORDINARY_NOUNS = {"制度", "態度", "程度", "尺度", "角度", "年度", "溫度", "能見度", "高度"}
 _DEGREE_PREFIX = "很|非常|相當|較|頗|甚|極|極其|偏"
 _DEGREE = re.compile(rf"({_DEGREE_PREFIX})?[高大強低小弱]")
-_LOW_DEGREE = re.compile(rf"(?:不(?:太|算|很|夠)?[高大強]|(?:{_DEGREE_PREFIX})?[低小弱])")
+_LOW_DEGREE = re.compile(rf"(?:不(?:太|算|很|夠)?(?:[高大強]|理想|出色)|(?:{_DEGREE_PREFIX})?[低小弱])")
 _SUFFICIENT_DEGREES = {"足夠", "充足"}
+_EVALUATIVE_MODIFIERS = {"出色", "理想"}
 _JARGON_MODIFIER_POS = _MODIFIER_POS - {"m", "mq", "q"}
 _LOW_DEGREE_WORDING = {
     "知名度": "名氣不大", "可讀性": "不太好讀", "可看性": "不太好看", "可聽性": "不太動聽",
@@ -588,7 +634,8 @@ def _jargon_target(
     modifiers = []
     for index, token in enumerate(tail):
         word = token.surface
-        if word == "高度" and not modifiers:
+        # 詞典也會把「出色」標為 v、「理想」標為 n。
+        if word in _EVALUATIVE_MODIFIERS or (word == "高度" and not modifiers):
             modifiers.append(word)
             continue
         # 「更具／頗具」自帶程度，後接裸名詞也算灰區；其他頭詞仍需修飾語。
@@ -606,6 +653,15 @@ def _jargon_target(
                     and _property_ends_here(tail, end)):
                 return _JargonTarget(term, end, "".join(modifiers), keep_term=last > index)
             break
+        # 「計算／複雜度」：動詞性前綴與性／度名詞在原文銜接時，視為複合指標。
+        if (modifiers or head[0] in _JARGON_HEAD_DEGREE) and token.pos in {"v", "vn"} and index + 1 < len(tail):
+            following = tail[index + 1]
+            if (following.pos.startswith("n") and following.start_char == token.end_char
+                    and len(following.surface) > 1 and following.surface.endswith(("性", "度"))
+                    and following.surface not in _ORDINARY_NOUNS
+                    and _property_ends_here(tail, following.end_char)):
+                term = text[token.start_char:following.end_char]
+                return _JargonTarget(term, following.end_char, "".join(modifiers), keep_term=True)
         # 和預檢同樣辨識「可／觀察／性」，條件是三個分詞在原文銜接。
         if modifiers and word == "可" and index + 2 < len(tail):
             verb, suffix = tail[index + 1:index + 3]
@@ -712,7 +768,7 @@ def _jargon_issues(
         )
 
 
-_PLURAL_WORDS = re.compile(r"人們|(?:民眾|聽眾|觀眾|讀者|球員|師生|同胞|顧客|乘客|長者|工作人員)們")
+_PLURAL_WORDS = re.compile(r"人們|(?:民眾|聽眾|觀眾|讀者|球員|師生|同胞|顧客|乘客|長者|工作人員|群眾)們")
 _AS_ONE_OF = re.compile(r"作為(?P<group>.+?)之一")
 _ONE_OF = re.compile("之一")
 _EXPLICIT_GROUP = re.compile(
@@ -798,7 +854,7 @@ _BEI = re.compile("被")
 _NATURAL_PASSIVE = re.compile(r"\s*(?:殺|捕|毀|淘汰)")
 _PASSIVE_PREDICATE = re.compile(
     r"(?P<adverb>(?:(?:徹底|完全|嚴重|暫時|正式|公開|一再|一度|再次|多次|直接|一致|普遍|當場|立即|堅決)\s*)*)"
-    r"(?P<verb>接受|拒絕|採用|發現|認為|嚇倒|懷疑|准許|推選為|選為|指出|詢及|升為|改變|核准|駁回|鎖定|要求|否決|公告|歸類為|歸類|延後)"
+    r"(?P<verb>接受|拒絕|採用|發現|認為|嚇倒|懷疑|准許|推選為|選為|指出|詢及|升為|改變|核准|駁回|鎖定|要求|否決|公告|歸類為|歸類|延後|擱置)"
 )
 _NATIVE_PASSIVES = {
     "准許": ("獲准", "未獲准"),
@@ -809,6 +865,7 @@ _NATIVE_PASSIVES = {
 }
 # 時間／語氣副詞納入診斷 span；「才」等焦點副詞不納入。
 _PASSIVE_CUES = {"仍", "已", "至今", "尚未", "從未", "已經", "曾", "曾經", "還", "並"}
+_PASSIVE_CLAUSE_INTRO = re.compile(r"(?:沒想到|沒有想到|想不到|不料|未料到|沒料到)\s*")
 _TITLE_VERBS = {"選為", "升為", "推選為", "歸類為"}
 _DELAY_DURATION = re.compile(
     rf"\s*(?:{_NUMBER}|半)\s*(?:個半?\s*)?"
@@ -884,6 +941,13 @@ def _passive_issues(clause: _Clause) -> Iterator[Issue | None]:
             while first < len(members) - 1 and members[first].pos == "c":
                 first += 1
             start = members[first].start_char
+            # 「我沒想到」等引出內嵌句，診斷從其受事或被動結構起算。
+            intro_start = first
+            if _HUMAN_PRONOUN.fullmatch(members[first].surface) and first + 1 < len(members):
+                intro_start += 1
+            intro = _PASSIVE_CLAUSE_INTRO.match(text, members[intro_start].start_char, phrase_start)
+            if intro and intro.end() in tokens:
+                start = intro.end()
             instruction = (
                 f"讓施事「{agent}」作主詞，用「{predicate[0]}」作謂語，把原受事接在後面。"
                 "保留原句的否定、時間、情態與程度。"
@@ -898,12 +962,15 @@ def _passive_issues(clause: _Clause) -> Iterator[Issue | None]:
             cues = text[start:phrase_start]
             if verb in _TITLE_VERBS:
                 # 職稱／賓語併入 span，遇「的」或 clause 邊界即止；改寫只動「被＋V」。
+                # 「重大品質異常」的「異常」可被標 d：分句尾的 d／ad 仍視為賓語成分。
                 for token in clause.tokens:
                     if token.start_char < end:
                         continue
-                    if token.start_char != end or token.true_de_role == DE_ATTR or not (
+                    tail_ok = (
                         _noun_head(token) or token.pos in {"a", "an", "b", "m", "mq", "q"}
-                    ):
+                        or (token.pos in {"d", "ad"} and token is clause.tokens[-1])
+                    )
+                    if token.start_char != end or token.true_de_role == DE_ATTR or not tail_ok:
                         break
                     end = token.end_char
             if verb in _NATIVE_PASSIVES:

@@ -1,6 +1,6 @@
 # Ticket Index
 
-> **Last updated**: 2026-11-19
+> **Last updated**: 2026-11-20
 >
 > Source: `zh_polish_skill_spec_v2.md`（wenqi v2.0.0 技術與理論規格）．Operation: Create．
 > 分階段依規格 §8.2 路線圖：Milestone 1 基礎建設與 L0/L5 → Milestone 2 四層規則引擎 → Milestone 3 六個 Skills → Milestone 4 E2E Dogfooding。
@@ -11,7 +11,7 @@
 | --- | --- |
 | ✅ Done | 5 |
 | 🔧 In Progress | 0 |
-| 📋 Pending | 1 |
+| 📋 Pending | 2 |
 | 🚫 Blocked | 9 |
 | ⏸️ Deferred | 0 |
 
@@ -49,6 +49,12 @@
 | # | Ticket | Status | Depends On | Notes |
 | --- | --- | --- | --- | --- |
 | 015 | **[TEST: Checkpoint 2 — E2E Dogfooding 與詞庫微調](./015-test-checkpoint-2-e2e-dogfooding.md)** | `blocked` | #014 | Gate: 最終交付驗收；需使用者作者裁決 |
+
+## Follow-up fixes
+
+| # | Ticket | Status | Depends On | Notes |
+| --- | --- | --- | --- | --- |
+| 016 | [L0 消歧修正：名詞性時間詞組後的「的」](./016-l0-nominal-time-de-role.md) | `pending` | #004 ✅ | R-33，涉及 #007、#008 |
 
 ## Status Key
 

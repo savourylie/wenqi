@@ -1,4 +1,4 @@
-"""原外部 L1 題庫與 A 批的回歸基準。
+"""原外部 L1 題庫與 A/B/R 批的回歸基準。
 
 每題先跑 L5 預檢，再依題庫記錄的作者裁決執行 L1。命中須規則、span、severity 全同。
 禁命中不得重疊，零診斷對照須全句無診斷。
@@ -17,7 +17,12 @@ from engine.rules.l5_preflight import preflight
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
-BANK_NAMES = ("l1_question_bank.json", "l1_question_bank_a.json")
+BANK_SIZES = {
+    "l1_question_bank.json": 36,
+    "l1_question_bank_a.json": 36,
+    "l1_question_bank_b.json": 60,
+    "l1_question_bank_r.json": 60,
+}
 
 
 @pytest.fixture(scope="module")
@@ -75,9 +80,9 @@ def overlaps(issue, start, end):
 
 
 def _params():
-    for name in BANK_NAMES:
+    for name, size in BANK_SIZES.items():
         bank = json.loads((FIXTURES / name).read_text(encoding="utf-8"))
-        assert len(bank) == 36
+        assert len(bank) == size
         for case in bank:
             marks = []
             if case.get("known_gap"):
