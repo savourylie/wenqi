@@ -4,7 +4,7 @@
 `blocked`
 
 ## Dependencies
-- Requires: #007, #008, #009, #010
+- Requires: #007, #008, #009 ✅, #010
 
 ## Description
 四層規則各自通過單元測試後，需要一個跨層整合關卡：以 §8.1 的四個 Golden Case 透過完整 CLI（`--mode lint --layer ALL`）端到端驗證多層共現偵測、白名單保護、L0 消歧義與 profile 閾值的協同行為。這是 Milestone 2 的完成定義；六個 Skills（Milestone 3）依賴此關卡通過，確保 SKILL.md 的 Few-Shot 與改寫指令建立在已驗證的診斷輸出上。

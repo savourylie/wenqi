@@ -1,6 +1,6 @@
 # Ticket Index
 
-> **Last updated**: 2026-11-20
+> **Last updated**: 2026-11-21
 >
 > Source: `zh_polish_skill_spec_v2.md`（wenqi v2.0.0 技術與理論規格）．Operation: Create．
 > 分階段依規格 §8.2 路線圖：Milestone 1 基礎建設與 L0/L5 → Milestone 2 四層規則引擎 → Milestone 3 六個 Skills → Milestone 4 E2E Dogfooding。
@@ -9,10 +9,10 @@
 
 | Status | Count |
 | --- | --- |
-| ✅ Done | 5 |
+| ✅ Done | 6 |
 | 🔧 In Progress | 0 |
 | 📋 Pending | 2 |
-| 🚫 Blocked | 9 |
+| 🚫 Blocked | 8 |
 | ⏸️ Deferred | 0 |
 
 ## Phase 1 — 基礎建設與 L0/L5（Milestone 1）
@@ -32,9 +32,9 @@
 | --- | --- | --- | --- | --- |
 | 007 | [L1 規則引擎：詞性與語態重心](./007-l1-vitality-rules.md) | `blocked` | #006 | 可與 008–010 並行 |
 | 008 | [L2 規則引擎：修飾與包孕結構](./008-l2-branching-rules.md) | `blocked` | #006 | 可與 007/009/010 並行 |
-| 009 | [L3 規則引擎：邏輯與銜接機制](./009-l3-logic-rules.md) | `blocked` | #006 | 可與 007/008/010 並行 |
+| 009 | [L3 規則引擎：邏輯與銜接機制](./009-l3-logic-rules.md) | `done` | #006 ✅ | L3 回歸 137 項通過 · 盲測 20/20 · [PR #12](https://github.com/savourylie/wenqi/pull/12) |
 | 010 | [L4 規則引擎：篇章呼吸與音律節奏](./010-l4-cadence-rules.md) | `blocked` | #006 | 可與 007–009 並行 |
-| 011 | **[TEST: Checkpoint 1 — Golden Test Suite 全層整合驗證](./011-test-checkpoint-1-golden-suite.md)** | `blocked` | #007, #008, #009, #010 | Gate: Milestone 2 引擎完成；Skills 開發等待此關卡 |
+| 011 | **[TEST: Checkpoint 1 — Golden Test Suite 全層整合驗證](./011-test-checkpoint-1-golden-suite.md)** | `blocked` | #007, #008, #009 ✅, #010 | Gate: Milestone 2 引擎完成；Skills 開發等待此關卡 |
 
 ## Phase 3 — 六個 Agent Skills（Milestone 3）
 

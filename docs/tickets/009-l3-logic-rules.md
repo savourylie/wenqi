@@ -1,25 +1,25 @@
 # [TICKET-009] L3 規則引擎：邏輯與銜接機制 (l3_logic.py)
 
 ## Status
-`blocked`
+`done`
 
 ## Dependencies
-- Requires: #006
+- Requires: #006 ✅
 
 ## Description
 實作 `engine/rules/l3_logic.py`：依 §5.2 第三層規則矩陣偵測形合過剩病灶——冗餘介詞外框（In the process of 式包裝）、病態雙重因果（由於…使得…主語湮沒）、並列連詞西化（及/與誤連謂詞）。這是「由外而內」折疊重構的 Priority 1 層，先剝外殼才動核心。
 
 ## Acceptance Criteria
-- [ ] 實作三條規則，依 §5.2 L3 表格：
+- [x] 實作三條規則，依 §5.2 L3 表格：
   - `L3_PREPOSITIONAL_FRAME`：靶心型 `(有關|關於|針對|對於)+NP(2~15字)+的?(問題|種種|部分|方面|事項|故事)?`；情境型 `(在|於|從|當)+NP/VP(2~15字)+的(過程(當)?中|背景(之)?下|情況下|前提下|角度來看|層面上|基礎上)` 與「來到我們的中間」；後半句確實探討「問題本身」時保留「問題」僅刪「有關」；指令為剝外框（核心 NP 作主語/受詞，或改「[VP]時，」「就[NP]而言，」）。
   - `L3_CAUSAL_MALFORMED`：三型——主語湮沒 `(由於|因為|鑑於)…，…(使得|導致|造成|令)`；心理名詞驅使 `(由於|因為|受到)+心理名詞+的(驅使|影響|緣故)`；短句形合過剩 `由於/因為 [A≤8字]，所以/因此 [B≤8字]`（此型在 tech profile 預設關閉，對應 `L3_SHORT_CAUSAL_DROP` disabled_rules）；指令分別為刪由於/使得還原主語、「出於好奇」、意合並置。
   - `L3_CONJUNCTION_MISUSE`：及/以及/與/和 連接謂詞、形容詞片語或比較級（更…/越…）時觸發；同類名詞串列尾綴 `N1、N2、N3 及 N4`；嚴格集合定義之名詞並列豁免；指令為改用「而」（慢而可靠）、對稱四字比較級改逗號、名詞串列改頓號並置。
-- [ ] 每條 Issue 含完整欄位與 theoretical_basis（意合 vs 形合、主語湮沒、「而」的詞性邊界）。
-- [ ] `disabled_rules` 生效：tech profile 下短句因果型不觸發，essay/social 下觸發。
-- [ ] Part I §2.3.2 案例庫病態句命中、道地句不誤報（「清風徐來，水波不興」不觸發）。
-- [ ] Golden Case 1 斷言：「在系統遷移的過程當中」與「有關…的問題」觸發 L3_PREPOSITIONAL_FRAME。
-- [ ] Golden Case 3 斷言：「由於…使得…」觸發 L3_CAUSAL_MALFORMED。
-- [ ] Golden Case 4 斷言：「起步更早及邁步更快」觸發 L3_CONJUNCTION_MISUSE。
+- [x] 每條 Issue 含完整欄位與 theoretical_basis（意合 vs 形合、主語湮沒、「而」的詞性邊界）。
+- [x] `disabled_rules` 生效：tech profile 下短句因果型不觸發，essay/social 下觸發。
+- [x] Part I §2.3.2 案例庫病態句命中、道地句不誤報（「清風徐來，水波不興」不觸發）。
+- [x] Golden Case 1 斷言：「在系統遷移的過程當中」與「有關…的問題」觸發 L3_PREPOSITIONAL_FRAME。
+- [x] Golden Case 3 斷言：「由於…使得…」觸發 L3_CAUSAL_MALFORMED。
+- [x] Golden Case 4 斷言：「起步更早及邁步更快」觸發 L3_CONJUNCTION_MISUSE。
 
 ## Design Reference
 - `zh_polish_skill_spec_v2.md` §2.3（L3 理論：意合/形合、介詞外框、And 意識）、§5.2 L3 規則矩陣、§4.1A（tech disabled_rules）、§8.1 Cases 1/3/4。
@@ -68,3 +68,8 @@
 - Q2 逐一檢查可能的外框尾詞。位於定語內的「故事」保留在核心，例如「地方傳說故事的查證」。歧義例「有關故事結構的問題」完整命中，建議只刪「有關」。
 - Q3 遇到獨立的列舉引導語時，以它辨識集合線索的適用範圍。「僅限會員報名的課程包含……」中的限制修飾課程，活動清單照常檢查。
 - 新增 8 個回歸案例。每次掃描前先跑 L5，L3 回歸 137 項、全套 732 項通過，016 的 R-33 為既有的預期失敗。外部盲測 20/20、標記的 `ALL` 2/2，Golden Cases 1～4 的 `L3` 和 `ALL` 再次通過。
+
+### 2026-11-21（結案）
+
+- L3 實作與驗收已合併至 `main`，合併提交為 `18ea5ef`。 [PR #12](https://github.com/savourylie/wenqi/pull/12)
+- #006 的 Scanner CLI 已合併並完成本票所需的串接驗證。 [PR #7](https://github.com/savourylie/wenqi/pull/7)
