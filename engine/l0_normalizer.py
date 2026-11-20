@@ -15,13 +15,19 @@ from engine.tokenizer_adapter import JiebaPosAdapter, Token, TokenizerAdapter
 DE_ATTR = "DE_ATTR"
 DE_ADV = "DE_ADV"
 DE_COMP = "DE_COMP"
+RESULT_ADVERBS = frozenset({"成功", "順利"})
+ACHIEVEMENT_VERBS = frozenset({"推翻", "發明", "泳渡", "解決", "完成", "突破"})
 
 _DE_MARKERS = {"的", "地", "得"}
+_ADVERB_MARKERS = {"的", "地"}
 _MODAL_VERBS = {"能", "會", "可以"}
 _NOUN_POS = {"n", "nr", "ns", "nt", "nz"}
 _QUANTIFIER_POS = {"m", "q", "mq"}
 _COMPLEMENT_ADJECTIVE_POS = {"a", "ad", "b", "an"}
 _ADVERBIAL_POS = {"d", "a", "ad", "b"}
+_LONG_MODIFIER_POS = _ADVERBIAL_POS | {"l", "z"}
+_VERBAL_IDIOMS = {"知其不可為而為之", "明知不可為而為之"}
+_PREDICATE_PREFIXES = {"竟然", "居然", "還是", "大"}
 _VERBAL_POS = {"v", "vn"}
 _VERB_INTRODUCERS = {"去", "來", "把", "被", "將"}
 _ASPECT_PARTICLES = {"了", "過", "著"}
@@ -318,6 +324,151 @@ def _is_adverbial(
     )
 
 
+def han_length(text: str) -> int:
+    return sum(
+        char == "〇" or unicodedata.name(char, "").startswith(
+            ("CJK UNIFIED IDEOGRAPH", "CJK COMPATIBILITY IDEOGRAPH")
+        )
+        for char in text
+    )
+
+
+def _joined(left: Token, right: Token) -> bool:
+    return left.end_char == right.start_char and not (left.is_frozen or right.is_frozen)
+
+
+def _verbal_idiom_start(tokens: Sequence[Token], end: int, suffix: str = "") -> int | None:
+    phrase = suffix
+    for index in range(end - 1, -1, -1):
+        if not _joined(tokens[index], tokens[index + 1]):
+            break
+        phrase = tokens[index].surface + phrase
+        if phrase in _VERBAL_IDIOMS:
+            return index
+        if not any(idiom.endswith(phrase) for idiom in _VERBAL_IDIOMS):
+            break
+    return None
+
+
+def long_adverbial_start(tokens: Sequence[Token], marker: int) -> int | None:
+    """成語、四字以上的修飾片語或重疊量詞，可作長狀語。"""
+    if marker == 0 or not _joined(tokens[marker - 1], tokens[marker]):
+        return None
+    left = tokens[marker - 1]
+    if left.pos == "i" or (left.pos in _VERBAL_POS and han_length(left.surface) >= 4):
+        return marker - 1
+
+    if marker >= 2 and _joined(tokens[marker - 2], left):
+        previous = tokens[marker - 2]
+        if left.pos in _QUANTIFIER_POS and previous.surface == left.surface:
+            return marker - 2 if han_length(left.surface) >= 2 else None
+
+    if left.surface.endswith("之"):
+        idiom = _verbal_idiom_start(tokens, marker)
+        if idiom is not None:
+            return idiom
+    start = marker
+    while start > 0 and tokens[start - 1].pos in _LONG_MODIFIER_POS:
+        if not _joined(tokens[start - 1], tokens[start]):
+            break
+        start -= 1
+    length = sum(han_length(token.surface) for token in tokens[start:marker])
+    return start if length >= 4 else None
+
+
+def adverbial_verb_index(tokens: Sequence[Token], marker: int) -> int | None:
+    """在同一片段內略過「竟然大唱」、「還是去赴」等動詞前綴。"""
+    for index in range(marker + 1, len(tokens)):
+        token = tokens[index]
+        if not _joined(tokens[index - 1], token):
+            break
+        if token.surface in _VERB_INTRODUCERS and index + 1 < len(tokens):
+            following = tokens[index + 1]
+            if following.pos in _VERBAL_POS and _joined(token, following):
+                return index + 1
+        if token.pos in _VERBAL_POS:
+            return index
+        # 「的」後的普通副詞也可以修飾名物化事件，如「橫貫公路的再度坍方」。
+        if token.surface not in _PREDICATE_PREFIXES and (
+            tokens[marker].surface != "地" or token.pos not in {"d", "ad"}
+        ):
+            break
+    return None
+
+
+def _split_token(token: Token, index: int, left_pos: str, right_pos: str) -> tuple[Token, Token]:
+    midpoint = token.start_char + index
+    return (
+        replace(token, surface=token.surface[:index], pos=left_pos, end_char=midpoint),
+        replace(token, surface=token.surface[index:], pos=right_pos, start_char=midpoint),
+    )
+
+
+def _repair_de_boundaries(tokens: Sequence[Token]) -> Iterator[Token]:
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        left = tokens[index - 1] if index else None
+        right = tokens[index + 1] if index + 1 < len(tokens) else None
+        if (
+            token.pos == "z" and len(token.surface) > 2 and token.surface.endswith("的")
+            and right is not None and right.pos in _NOUN_POS and _joined(token, right)
+        ):
+            # 例如「彎彎的」被合成一詞，後接名詞時應保留定語助詞。
+            yield from _split_token(token, len(token.surface) - 1, token.pos, "uj")
+        elif token.surface in {"之的", "之地"} and _verbal_idiom_start(tokens, index, "之") is not None:
+            marker_pos = "uv" if token.surface[1] == "地" else "uj"
+            yield from _split_token(token, 1, "u", marker_pos)
+        elif (
+            left is not None and right is not None and len(token.surface) == 2
+            and token.surface[0] in _ADVERB_MARKERS and _joined(left, token) and _joined(token, right)
+            and (
+                (token.surface[1] == "想" and right.surface == "出" and left.pos == "i")
+                or (token.surface[1] == "泳" and right.surface == "渡" and left.surface in RESULT_ADVERBS)
+            )
+        ):
+            # jieba 可能把「地想出」和「地泳渡」拆成「地想＋出」與「地泳＋渡」。
+            marker_pos = "uv" if token.surface[0] == "地" else "uj"
+            marker, verb = _split_token(token, 1, marker_pos, "v")
+            yield marker
+            yield replace(verb, surface=verb.surface + right.surface, end_char=right.end_char)
+            index += 1
+        elif (
+            token.surface == "解決問題" and index >= 2 and left is not None
+            and left.surface in _ADVERB_MARKERS
+            and tokens[index - 2].surface in RESULT_ADVERBS
+            and _joined(tokens[index - 2], left) and _joined(left, token)
+            and (
+                left.surface == "地" or (
+                    (index < 3 or not _is_nominal_lead(tokens[index - 3]))
+                    and (right is None or right.surface not in _DE_MARKERS)
+                )
+            )
+        ):
+            yield from _split_token(token, 2, "v", "n")
+        else:
+            yield token
+        index += 1
+
+
+def _is_long_adverbial(tokens: Sequence[Token], marker: int, start: int) -> bool:
+    verb_index = adverbial_verb_index(tokens, marker)
+    if verb_index is None:
+        return False
+    if tokens[marker].surface == "地":
+        return True
+    # 「的＋動名詞」仍需謂語線索，避免把名詞組誤作狀語。
+    verb = tokens[verb_index]
+    if verb.pos == "v":
+        return True
+    if start > 0 and _is_nominal_lead(tokens[start - 1]):
+        return False
+    if verb_index + 1 == len(tokens):
+        return False
+    following = tokens[verb_index + 1]
+    return following.surface in _ASPECT_PARTICLES or following.pos in _OBJECT_POS
+
+
 def _normalize_de(
     tokens: list[Token],
 ) -> tuple[list[DeNormalizationEntry], list[L0Issue]]:
@@ -330,17 +481,28 @@ def _normalize_de(
         left = tokens[i - 1] if i >= 1 else None
         right = tokens[i + 1] if i + 1 < len(tokens) else None
         right2 = tokens[i + 2] if i + 2 < len(tokens) else None
+        long_start = long_adverbial_start(tokens, i) if token.surface in _ADVERB_MARKERS else None
+        long_adverbial = long_start is not None and _is_long_adverbial(tokens, i, long_start)
         if left is not None:
-            if token.surface == "地" and left.pos in _QUANTIFIER_POS:
+            if token.surface == "地" and left.pos in _QUANTIFIER_POS and not long_adverbial:
                 continue  # 「一塊地」的「地」是名詞。
             if token.surface == "得" and (left.pos == "r" or left.pos in _NOUN_POS):
                 continue  # 主語後的助動詞 děi 不屬於三種助詞。
 
         role = DE_ATTR
         if left is not None and right is not None:
-            if _is_complement(left, right, right2):
+            likeness_complement = (
+                token.surface == "得" and left.surface == "長" and right.pos == "v"
+                and right.surface in {"像", "好像"} and _joined(left, token) and _joined(token, right)
+            )
+            if likeness_complement or _is_complement(left, right, right2):
                 role = DE_COMP
-            elif _is_adverbial(tokens[i - 2] if i >= 2 else None, left, right, right2):
+            elif long_adverbial or _is_adverbial(tokens[i - 2] if i >= 2 else None, left, right, right2):
+                role = DE_ADV
+            elif (
+                token.surface == "地" and left.surface in RESULT_ADVERBS
+                and right.surface in ACHIEVEMENT_VERBS and _joined(left, token) and _joined(token, right)
+            ):
                 role = DE_ADV
 
         token.true_de_role = role
@@ -365,6 +527,6 @@ def normalize(text: str, tokenizer: Optional[TokenizerAdapter] = None) -> L0Resu
     """遮罩、分詞與消歧義。可傳入已註冊白名單的分詞器。"""
     masked_text, regions = mask_markdown(text)
     adapter = tokenizer if tokenizer is not None else JiebaPosAdapter()
-    tokens = _restore_tokens(masked_text, regions, adapter)
+    tokens = list(_repair_de_boundaries(_restore_tokens(masked_text, regions, adapter)))
     normalization_map, issues = _normalize_de(tokens)
     return L0Result(masked_text, regions, tokens, normalization_map, issues)
