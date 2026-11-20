@@ -1,9 +1,8 @@
-"""外部 36 題 L1 題庫的回歸基準（tests/fixtures/l1_question_bank.json）。
+"""原外部 L1 題庫與 A 批的回歸基準。
 
-題庫原為外部複驗資產，收進 repo 後以 pytest 重跑：命中須規則、span、severity
-全同，禁命中不得重疊，零診斷對照須全句無診斷。L1-17/18/29 是無靈主語子句主語
-的已知缺口（#007 As-Built 2026-11-20），以 strict xfail 標記；規則擴充後若開始
-通過，會強制移除標記。
+每題先跑 L5 預檢，再依題庫記錄的作者裁決執行 L1。命中須規則、span、severity 全同。
+禁命中不得重疊，零診斷對照須全句無診斷。
+各題的 known_gap 記錄已知缺口，採 strict xfail，通過時需要移除標記。
 """
 
 import json
@@ -12,28 +11,41 @@ from pathlib import Path
 
 import pytest
 
-from engine import load_default_lexicons
+from engine import state_manager as state
 from engine.ast_scanner import lint
-from engine.state_manager import DEFAULT_PROFILES
+from engine.rules.l5_preflight import preflight
 
 
-BANK = json.loads(
-    (Path(__file__).parent / "fixtures" / "l1_question_bank.json").read_text(encoding="utf-8")
-)
+FIXTURES = Path(__file__).parent / "fixtures"
+BANK_NAMES = ("l1_question_bank.json", "l1_question_bank_a.json")
 
 
-def scan_case(case):
-    # 對照 CLI 冷啟動：全域白名單即內建技術詞，暫用詞僅作用於本題。
-    profile = case["profile"]
-    settings = {
-        "effective_profile": profile,
-        "profile_config": DEFAULT_PROFILES[profile],
-        "whitelist": load_default_lexicons()["tech_whitelist"] + [
-            {"term": term, "pos": "nz"} for term in case["ephemeral_whitelist"]
-        ],
-        "disabled_rules": {"profile": DEFAULT_PROFILES[profile]["disabled_rules"], "document": []},
-    }
-    return lint(case["text"], settings, requested_layer="L1")
+@pytest.fixture(scope="module")
+def review_state_dir(tmp_path_factory):
+    return tmp_path_factory.mktemp("l1-question-bank")
+
+
+def scan_case(case, state_dir):
+    text = case["text"]
+    before_review = state.load_settings_for_stdin(text, state_dir=state_dir)
+    review = preflight(
+        text,
+        source_type="stdin",
+        target_id="stdin",
+        whitelist=before_review["whitelist"],
+        fallback_profile=before_review["effective_profile"],
+    )
+    assert review["mode"] == "L5_PREFLIGHT"
+
+    # 題庫的語體與暫用詞是作者裁決。L5 提出的其他候選仍待確認。
+    settings = state.load_settings_for_stdin(
+        text,
+        profile_override=case["profile"],
+        ephemeral_terms=case["ephemeral_whitelist"],
+        state_dir=state_dir,
+    )
+    assert settings["content_hash"] == review["content_hash"]
+    return lint(text, settings, requested_layer="L1")
 
 
 def document_issues(text, payload):
@@ -63,18 +75,20 @@ def overlaps(issue, start, end):
 
 
 def _params():
-    assert len(BANK) == 36
-    for case in BANK:
-        marks = []
-        if case.get("known_gap"):
-            marks.append(pytest.mark.xfail(strict=True, reason=case["known_gap"]))
-        yield pytest.param(case, id=case["id"], marks=marks)
+    for name in BANK_NAMES:
+        bank = json.loads((FIXTURES / name).read_text(encoding="utf-8"))
+        assert len(bank) == 36
+        for case in bank:
+            marks = []
+            if case.get("known_gap"):
+                marks.append(pytest.mark.xfail(strict=True, reason=case["known_gap"]))
+            yield pytest.param(case, id=case["id"], marks=marks)
 
 
 @pytest.mark.parametrize("case", list(_params()))
-def test_question_bank_case(case):
+def test_question_bank_case(case, review_state_dir):
     text = case["text"]
-    payload = scan_case(case)
+    payload = scan_case(case, review_state_dir)
     assert payload["effective_profile"] == case["profile"]
     actual = document_issues(text, payload)
 

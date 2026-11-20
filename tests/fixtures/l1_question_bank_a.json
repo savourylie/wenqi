@@ -1,0 +1,742 @@
+[
+  {
+    "id": "A-01",
+    "profile": "essay",
+    "text": "設計師在長桌上展開了調查，想釐清這批布料褪色的原因。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "在長桌上展開了調查",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-02",
+    "profile": "essay",
+    "text": "設計師在長桌上展開了布樣，想釐清這批布料褪色的原因。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "展開了布樣",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-03",
+    "profile": "tech",
+    "text": "維運團隊昨天針對舊訂單表進行了兩次完整備份，隨後對過期索引加以徹底清理，並對這起異常作出正式回應。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行了兩次完整備份",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "加以徹底清理",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "作出正式回應",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "known_gap": "弱動詞的備份、清理、回應句型尚缺覆蓋。"
+  },
+  {
+    "id": "A-04",
+    "profile": "social",
+    "text": "基金會今年給予偏鄉小學兩百套實驗器材。志工也在禮堂將展示板逐一展開，方便學童近距離觀察。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "給予偏鄉小學兩百套實驗器材",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "逐一展開",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-05",
+    "profile": "tech",
+    "text": "資料工程師昨天先對這批客服紀錄進行向量化，接著又針對舊版查詢介面進行過 refactor。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行過 refactor",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行向量化",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-06",
+    "profile": "essay",
+    "text": "居民擔心這座舊橋的坍塌，已經連署請市府派員勘驗。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "這座舊橋的坍塌",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-07",
+    "profile": "essay",
+    "text": "居民擔心這座舊橋的裂縫，已經連署請市府派員勘驗。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "這座舊橋的裂縫",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-08",
+    "profile": "tech",
+    "text": "病患個資的未授權匯出已經違反院內資安規範，資訊室必須在今晚查明存取紀錄。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "病患個資的未授權匯出",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "known_gap": "事件名物化尚未辨識「未授權」修飾的「匯出」。"
+  },
+  {
+    "id": "A-09",
+    "profile": "essay",
+    "text": "他的筆記本還攤在書桌上。剛進門的學弟安靜地坐下，把桌上散落的講義整理得非常整齊。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "他的筆記本",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "剛進門的學弟",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "安靜地坐下",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "整理得非常整齊",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-10",
+    "profile": "social",
+    "text": "他的婉拒向來很有分寸，但承辦人直到開會前十分鐘才聽說法務部門的臨時退件。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "法務部門的臨時退件",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "他的婉拒",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "known_gap": "「退件」被分成名詞，事件讀法尚缺覆蓋。"
+  },
+  {
+    "id": "A-11",
+    "profile": "essay",
+    "text": "這間獨立書店在台北街頭頗具知名度，每逢週末總擠滿挑書的讀者。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "頗具知名度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-12",
+    "profile": "essay",
+    "text": "這間獨立書店在台北街頭相當有名，每逢週末總擠滿挑書的讀者。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "相當有名",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-13",
+    "profile": "tech",
+    "text": "改版後的說明文件呈現出高度的可讀性，整體架構也比舊版更具前瞻性。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出高度的可讀性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "更具前瞻性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-14",
+    "profile": "tech",
+    "text": "質檢團隊測得這批冷卻液的黏稠度為 12 cP。此外，核心節點也具備高可用性與確定性，能在離線環境中穩定運作。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "黏稠度",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備高可用性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "確定性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-15",
+    "profile": "social",
+    "text": "這份倉促拼湊的提案不具有前瞻性，在實務上也呈現出極低的穩定度。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "不具有前瞻性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出極低的穩定度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-16",
+    "profile": "tech",
+    "text": "登入逾時是本次要排查的錯誤其中之一，值班人員會先檢查憑證設定。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "其中之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-17",
+    "profile": "tech",
+    "text": "登入逾時是這三個錯誤其中之一，值班人員會先檢查憑證設定。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "其中之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-18",
+    "profile": "essay",
+    "text": "每逢燈會點燈前，人們總愛在廣場邊排隊拍照，圍觀的群眾們也跟著倒數歡呼。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "人們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "群眾們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "known_gap": "集合名詞詞表尚未納入「群眾」。"
+  },
+  {
+    "id": "A-19",
+    "profile": "social",
+    "text": "我們昨天和他們開完決選會議，最後從四位候選人中選出其中之一，負責統籌下半年的巡演。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "我們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "他們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "其中之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-20",
+    "profile": "essay",
+    "text": "作為大稻埕老字號茶行之一的長春堂，至今仍堅持炭火焙茶，也是北台灣最古老的家族商號之一。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "作為大稻埕老字號茶行之一的長春堂",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "最古老的家族商號之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-21",
+    "profile": "social",
+    "text": "排程模組的異常重啟迫使值班工程師連夜切換備援線路。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "排程模組的異常重啟迫使值班工程師",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "排程模組的異常重啟",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "known_gap": "無靈主語尚缺「重啟」事件及「值班工程師」詞組覆蓋。"
+  },
+  {
+    "id": "A-22",
+    "profile": "tech",
+    "text": "排程模組的異常重啟迫使值班工程師連夜切換備援線路。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "排程模組的異常重啟",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "排程模組的異常重啟迫使值班工程師",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-23",
+    "profile": "essay",
+    "text": "店租的連年調漲使得老街商戶不得不縮減營業時間。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "店租的連年調漲使得老街商戶",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "店租的連年調漲",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "known_gap": "無靈主語尚缺「調漲」事件及「老街商戶」詞組覆蓋。"
+  },
+  {
+    "id": "A-24",
+    "profile": "social",
+    "text": "因為山路積水未退，讓登山客改走北側步道。由於接駁車班次縮減，使得不少旅客轉搭計程車。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "因為山路積水未退，讓登山客",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "由於接駁車班次縮減，使得不少旅客",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-25",
+    "profile": "essay",
+    "text": "海溫的持續上升讓珊瑚礁大面積白化，也改變了沿岸洋流方向。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "海溫的持續上升",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "海溫的持續上升讓珊瑚礁",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "known_gap": "「持續上升」併成一詞，事件名物化尚未辨識。"
+  },
+  {
+    "id": "A-26",
+    "profile": "social",
+    "text": "這款機型在年度評比中被評審團採用了。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "這款機型在年度評比中被評審團採用了",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-27",
+    "profile": "social",
+    "text": "這款機型在年度評比中被評審團淘汰了。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被評審團淘汰",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-28",
+    "profile": "social",
+    "text": "您好，您提交的補貼申請至今仍未被核准，客服人員會持續協助追蹤進度。另外，原本負責協調的林專員上個月剛被推選為審查委員，後續將由新窗口與您聯繫。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "至今仍未被核准",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被推選為審查委員",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-29",
+    "profile": "essay",
+    "text": "嫌犯在碼頭準備搭船時當場被捕，倉庫裡囤放的違禁品也已在先前的大火中被毀。",
+    "ephemeral_whitelist": [],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被捕",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被毀",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-30",
+    "profile": "tech",
+    "text": "這個效能修補的合併請求已經被審核團隊擱置了兩週，昨晚又被資安小組駁回。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被審核團隊擱置了兩週",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "昨晚又被資安小組駁回",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "known_gap": "被動句詞表尚未納入「擱置」。"
+  },
+  {
+    "id": "A-31",
+    "profile": "tech",
+    "text": "這套金融稽核模組具備高度可審計性，能完整記錄每筆交易明細與操作紀錄。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備高度可審計性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-32",
+    "profile": "tech",
+    "text": "這套金融稽核模組具備高度可審計性，能完整記錄每筆交易明細與操作紀錄。",
+    "ephemeral_whitelist": [
+      "可審計性"
+    ],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備高度可審計性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ]
+  },
+  {
+    "id": "A-33",
+    "profile": "tech",
+    "text": "值班工程師已在主分支上進行 cherry-pick，並把修正後的映像檔推上測試區。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 cherry-pick",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ],
+    "must_skip": []
+  },
+  {
+    "id": "A-34",
+    "profile": "tech",
+    "text": "值班工程師已在主分支上進行 cherry-pick，並把修正後的映像檔推上測試區。",
+    "ephemeral_whitelist": [
+      "進行 cherry-pick"
+    ],
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 cherry-pick",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ]
+  },
+  {
+    "id": "A-35",
+    "profile": "tech",
+    "text": "舊版說明文件將範例寫成 `對舊資料進行清理`，請先參考以下規格：\n\n```text\n步驟一：對舊資料進行清理，避免殘留快取。\n```\n\n實作排程時，值班人員仍需對舊資料進行清理，才能確保統計報表準確。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行清理",
+        "occurrence": 3,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行清理",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行清理",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "known_gap": "正文的「進行清理」尚未命中弱動詞規則。"
+  },
+  {
+    "id": "A-36",
+    "profile": "social",
+    "text": "由於這份歷經三個跨局處諮詢委員會反覆開會彙整後才定稿的都更說明書頗具可讀性，因此民眾們昨天已針對補助條款進行了查詢，但修正案最後仍被議會駁回。",
+    "ephemeral_whitelist": [],
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "頗具可讀性",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "民眾們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行了查詢",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "修正案最後仍被議會駁回",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "歷經三個跨局處諮詢委員會反覆開會彙整後才定稿的都更說明書",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "known_gap": "「進行了查詢」尚未命中弱動詞規則。"
+  }
+]

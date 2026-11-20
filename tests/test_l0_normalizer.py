@@ -175,6 +175,8 @@ def test_token_crossing_mask_boundaries_is_retokenized_with_whitelist():
         ("紅的蘋果。", "的", DE_ATTR),
         ("我的。", "的", DE_ATTR),
         ("高興的跳起來。", "的", DE_ADV),
+        ("學弟安靜地坐下。", "地", DE_ADV),
+        ("安靜的書房適合閱讀。", "的", DE_ATTR),
         ("欣然的去研究。", "的", DE_ADV),
         ("他詳細的評估了這個方案。", "的", DE_ADV),
         ("詳細的評估這個方案。", "的", DE_ADV),

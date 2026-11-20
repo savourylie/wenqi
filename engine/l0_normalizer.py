@@ -302,7 +302,9 @@ def _is_nominal_lead(token: Token) -> bool:
 def _is_adverbial(
     left2: Optional[Token], left: Token, right: Token, right2: Optional[Token]
 ) -> bool:
-    if left.pos != "i" and (len(left.surface) < 2 or left.pos not in _ADVERBIAL_POS):
+    # jieba 可能把「安靜」標為人名。後接動詞時仍可作方式狀語。
+    quiet_manner = left.surface == "安靜" and not left.is_frozen and right.pos == "v"
+    if left.pos != "i" and (len(left.surface) < 2 or not (left.pos in _ADVERBIAL_POS or quiet_manner)):
         return False
 
     if right.pos == "vn":
