@@ -633,3 +633,31 @@ def test_weak_verb_recovers_merged_preposition():
     text = "文件組昨天也已對錯誤碼章節進行了全面翻修。"
     issue, = issues(scan(text, profile="tech"))
     assert (issue["rule_id"], issue["span"]) == (WEAK, "對錯誤碼章節進行了全面翻修")
+
+
+@pytest.mark.parametrize(("rule", "text", "span"), [
+    (WEAK, "維運團隊針對舊訂單表進行了兩次完整備份。", "針對舊訂單表進行了兩次完整備份"),
+    (WEAK, "值班人員仍需對舊資料進行清理。", "對舊資料進行清理"),
+    (WEAK, "客服已針對補助條款進行了查詢。", "針對補助條款進行了查詢"),
+    (WEAK, "團隊對這起異常作出正式回應。", "對這起異常作出正式回應"),
+    (EVENT, "病患個資的未授權匯出已經違反院內資安規範。", "病患個資的未授權匯出"),
+    (EVENT, "承辦人聽說法務部門的臨時退件。", "法務部門的臨時退件"),
+    (EVENT, "海溫的持續上升讓珊瑚礁大面積白化。", "海溫的持續上升"),
+    (PLURAL, "圍觀的群眾們也跟著倒數歡呼。", "群眾們"),
+    (PASSIVE, "合併請求已經被審核團隊擱置了。", "合併請求已經被審核團隊擱置了"),
+])
+def test_final_round_vocabulary_coverage(rule, text, span):
+    found = [i["span"] for i in issues(scan(text, profile="tech")) if i["rule_id"] == rule]
+    assert span in found
+
+
+@pytest.mark.parametrize("text", [
+    "雲端費率大幅調漲迫使維運工程師連夜重設快取規則。",
+    "雲端費率連番調漲讓財務主管不得不重新核定預算。",
+    "機房過熱迫使值班工程師緊急切斷備援主機的電源。",
+    "收單銀行臨時限額迫使金流工程師連夜切換備援通道。",
+])
+def test_clausal_subject_is_not_inanimate_nominalization(text):
+    # 規格裁決（2026-11-20）：事理子句主語（無「的」）非名物化病灶，
+    # 無靈主語規則只認 NP+的+VN 主語，不擴及子句主語。
+    assert INANIMATE not in {i["rule_id"] for i in issues(scan(text))}

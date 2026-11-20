@@ -37,25 +37,24 @@
     "must_hit": [
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "進行了兩次完整備份",
+        "span": "針對舊訂單表進行了兩次完整備份",
         "occurrence": 1,
         "severity": null
       },
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "加以徹底清理",
+        "span": "對過期索引加以徹底清理",
         "occurrence": 1,
         "severity": null
       },
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "作出正式回應",
+        "span": "對這起異常作出正式回應",
         "occurrence": 1,
         "severity": null
       }
     ],
-    "must_skip": [],
-    "known_gap": "弱動詞的備份、清理、回應句型尚缺覆蓋。"
+    "must_skip": []
   },
   {
     "id": "A-04",
@@ -143,8 +142,7 @@
         "severity": null
       }
     ],
-    "must_skip": [],
-    "known_gap": "事件名物化尚未辨識「未授權」修飾的「匯出」。"
+    "must_skip": []
   },
   {
     "id": "A-09",
@@ -199,8 +197,7 @@
         "occurrence": 1,
         "severity": null
       }
-    ],
-    "known_gap": "「退件」被分成名詞，事件讀法尚缺覆蓋。"
+    ]
   },
   {
     "id": "A-11",
@@ -350,8 +347,7 @@
         "severity": null
       }
     ],
-    "must_skip": [],
-    "known_gap": "集合名詞詞表尚未納入「群眾」。"
+    "must_skip": []
   },
   {
     "id": "A-19",
@@ -409,7 +405,7 @@
     "must_hit": [
       {
         "rule_id": "L1_INANIMATE_SUBJECT",
-        "span": "排程模組的異常重啟迫使值班工程師",
+        "span": "排程模組的異常重啟迫使值班工程師連夜切換備援線路",
         "occurrence": 1,
         "severity": null
       },
@@ -420,8 +416,7 @@
         "severity": null
       }
     ],
-    "must_skip": [],
-    "known_gap": "無靈主語尚缺「重啟」事件及「值班工程師」詞組覆蓋。"
+    "must_skip": []
   },
   {
     "id": "A-22",
@@ -453,7 +448,7 @@
     "must_hit": [
       {
         "rule_id": "L1_INANIMATE_SUBJECT",
-        "span": "店租的連年調漲使得老街商戶",
+        "span": "店租的連年調漲使得老街商戶不得不縮減營業時間",
         "occurrence": 1,
         "severity": null
       },
@@ -464,8 +459,7 @@
         "severity": null
       }
     ],
-    "must_skip": [],
-    "known_gap": "無靈主語尚缺「調漲」事件及「老街商戶」詞組覆蓋。"
+    "must_skip": []
   },
   {
     "id": "A-24",
@@ -508,8 +502,7 @@
         "occurrence": 1,
         "severity": null
       }
-    ],
-    "known_gap": "「持續上升」併成一詞，事件名物化尚未辨識。"
+    ]
   },
   {
     "id": "A-26",
@@ -591,7 +584,7 @@
     "must_hit": [
       {
         "rule_id": "L1_PASSIVE_BEI",
-        "span": "被審核團隊擱置了兩週",
+        "span": "這個效能修補的合併請求已經被審核團隊擱置了",
         "occurrence": 1,
         "severity": null
       },
@@ -602,8 +595,7 @@
         "severity": null
       }
     ],
-    "must_skip": [],
-    "known_gap": "被動句詞表尚未納入「擱置」。"
+    "must_skip": []
   },
   {
     "id": "A-31",
@@ -677,7 +669,7 @@
     "must_hit": [
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "進行清理",
+        "span": "對舊資料進行清理",
         "occurrence": 3,
         "severity": null
       }
@@ -685,18 +677,17 @@
     "must_skip": [
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "進行清理",
+        "span": "對舊資料進行清理",
         "occurrence": 1,
         "severity": null
       },
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "進行清理",
+        "span": "對舊資料進行清理",
         "occurrence": 2,
         "severity": null
       }
-    ],
-    "known_gap": "正文的「進行清理」尚未命中弱動詞規則。"
+    ]
   },
   {
     "id": "A-36",
@@ -718,7 +709,7 @@
       },
       {
         "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
-        "span": "進行了查詢",
+        "span": "針對補助條款進行了查詢",
         "occurrence": 1,
         "severity": null
       },
@@ -736,7 +727,6 @@
         "occurrence": 1,
         "severity": null
       }
-    ],
-    "known_gap": "「進行了查詢」尚未命中弱動詞規則。"
+    ]
   }
 ]
