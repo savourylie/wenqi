@@ -582,3 +582,54 @@ def test_l5_handoff_rejected_candidate_keeps_the_l1_diagnosis():
     assert (issue["rule_id"], issue["span"]) == (JARGON, "具有很高的可讀性")
     # 若作者改判豁免，同一句即放行。
     assert not issues(scan(text, profile=payload["suggested_profile"], frozen=("可讀性",)))
+
+
+@pytest.mark.parametrize(("text", "person"), [
+    ("資金的長期缺乏迫使獨立書店老闆縮減營業時間。", "獨立書店老闆"),
+    ("排班表的臨時變動帶給門市人員不小困擾。", "門市人員"),
+    ("轉機櫃檯的漫長等待讓現場旅客感到精疲力竭。", "現場旅客"),
+    ("月台班次的臨時變動讓候車乘客感到相當無奈。", "候車乘客"),
+    ("推薦引擎的突然變動讓內容編輯連夜重排首頁專題。", "內容編輯"),
+])
+def test_inanimate_person_object_keeps_attributive_modifiers(text, person):
+    found = [i for i in issues(scan(text)) if i["rule_id"] == INANIMATE]
+    assert found, f"未命中無靈主語：{text}"
+    assert person in found[0]["instruction"]
+
+
+def test_inanimate_person_scan_stops_at_the_predicate_boundary():
+    # 「上升」已是謂語，其後的「員工」不是使動動詞的受詞。
+    text = "流程的突然變動讓交通成本上升影響員工。"
+    assert INANIMATE not in {i["rule_id"] for i in issues(scan(text))}
+
+
+@pytest.mark.parametrize(("text", "span"), [
+    ("由於多區域備援節點的緊急部署，週末例行備份任務順延兩小時才啟動。", "多區域備援節點的緊急部署"),
+    ("推薦引擎的突然變動讓內容編輯連夜重排首頁專題。", "推薦引擎的突然變動"),
+    ("帳務組將核心帳本的夜間盤點排在每週日凌晨三點執行。", "核心帳本的夜間盤點"),
+    ("颱風的提早來襲打亂了離島船班表。", "颱風的提早來襲"),
+    ("金流閘道的頻繁逾時拖慢了整體結帳流程。", "金流閘道的頻繁逾時"),
+])
+def test_event_covers_compound_nps_temporal_modifiers_and_dictionary_heads(text, span):
+    found = [i["span"] for i in issues(scan(text, profile="tech")) if i["rule_id"] == EVENT]
+    assert span in found
+
+
+def test_jargon_compound_measure_with_verb_prefix():
+    text = "這套音訊壓縮演算法呈現出極低的計算複雜度，在低階穿戴裝置上也能即時運作。"
+    issue, = issues(scan(text, profile="tech"))
+    assert (issue["rule_id"], issue["span"]) == (JARGON, "呈現出極低的計算複雜度")
+    assert "計算複雜度" in issue["instruction"]
+    assert not issues(scan(text, profile="tech", frozen=("計算複雜度",)))
+
+
+def test_passive_classification_object_includes_mistagged_tail():
+    text = "這起冷鏈貨櫃失溫客訴在週會上被歸類為重大品質異常，倉儲部須於三日內提交改善計畫。"
+    issue, = issues(scan(text))
+    assert (issue["rule_id"], issue["span"]) == (PASSIVE, "被歸類為重大品質異常")
+
+
+def test_weak_verb_recovers_merged_preposition():
+    text = "文件組昨天也已對錯誤碼章節進行了全面翻修。"
+    issue, = issues(scan(text, profile="tech"))
+    assert (issue["rule_id"], issue["span"]) == (WEAK, "對錯誤碼章節進行了全面翻修")
