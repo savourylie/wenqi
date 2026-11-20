@@ -311,6 +311,50 @@ def test_lint_l1_cli_uses_rules_and_ephemeral_whitelist(state_dir):
     assert protected["summary"]["flagged_sentences"] == 0
 
 
+def test_l5_preflight_then_lint_cli_golden_cases_with_l2_and_all(state_dir):
+    text = (
+        "老師苦口婆心的勸了那個長得像你兄弟說話也有點像他的陌生男人半天，但他還是跑的很快。\n"
+        "這套架構比舊版起步更早及邁步更快，在灰暗的淒冷的天空下具有很高的可讀性。"
+    )
+    review = payload(run_cli("--mode", "preflight", "--stdin", text=text))
+    assert review["mode"] == "L5_PREFLIGHT"
+    assert review["content_hash"] == state.content_hash(text)
+    assert "可讀性" in {item["term"] for item in review["suspect_terms_for_review"]}
+
+    # Golden Cases 的作者裁決採散文語體，「可讀性」交給 L1 診斷。
+    args = ("--mode", "lint", "--stdin", "--profile", "essay", "--layer")
+    l2 = payload(run_cli(*args, "L2", text=text))
+    combined = payload(run_cli(*args, "ALL", text=text))
+    l2_rules = [
+        "L2_ADVERB_DI_OVERUSE", "L2_LEFT_BRANCH_OVERLOAD", "L2_DE_CHAIN_NOISE",
+    ]
+
+    def issues_from(result):
+        return [issue for diagnostic in result["diagnostics"] for issue in diagnostic["issues"]]
+
+    assert l2["thresholds_applied"]["max_pre_modifier_len"] == 12
+    assert l2["summary"]["issue_counts"] == {"L1": 0, "L2": 3, "L3": 0, "L4": 0}
+    assert [issue["rule_id"] for issue in issues_from(l2)] == l2_rules
+    all_issues = issues_from(combined)
+    assert [issue for issue in all_issues if issue["layer"] == "L2"] == issues_from(l2)
+    assert {"L0_TYPO_DE_COMP", "L1_PSEUDO_JARGON"} <= {issue["rule_id"] for issue in all_issues}
+
+
+def test_l5_preflight_then_l2_applies_the_confirmed_title(state_dir):
+    title = "大地的脈搏"
+    text = f"他讀{title}的作者的文章。"
+    review = payload(run_cli("--mode", "preflight", "--stdin", text=text))
+    assert review["mode"] == "L5_PREFLIGHT"
+    assert title not in review["active_whitelist_terms"]
+
+    args = ("--mode", "lint", "--layer", "L2", "--stdin", "--profile", review["suggested_profile"])
+    before = payload(run_cli(*args, text=text))
+    confirmed = payload(run_cli(*args, "--ephemeral-whitelist", title, text=text))
+    assert before["summary"]["issue_counts"]["L2"] == 1
+    assert confirmed["summary"]["issue_counts"]["L2"] == 0
+    assert confirmed["diagnostics"] == []
+
+
 def test_lint_keeps_unpunctuated_prose_across_block_boundaries(state_dir):
     text = "> 引文應略過。\n第一段沒句號\n~~~\n略過！\n~~~\n第二段沒句號\n\n第三段。"
     result = payload(run_cli("--mode", "lint", "--stdin", text=text))
