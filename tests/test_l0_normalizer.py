@@ -281,6 +281,29 @@ def test_golden_case_2_l0_assertions():
     ]
 
 
+@pytest.mark.parametrize(
+    ("text", "marker", "role"),
+    [
+        ("他苦心孤詣地想出一套好辦法來。", "地想出", DE_ADV),
+        ("大家苦中作樂地竟然大唱其民謠。", "地竟然", DE_ADV),
+        ("他知其不可為而為之地還是去赴了約。", "地還是", DE_ADV),
+        ("他知其不可為而為之的還是去赴了約。", "的還是", DE_ADV),
+        ("成功地泳渡了直布羅陀海峽。", "地泳渡", DE_ADV),
+        ("\x60地想\x60之後，他成功的解決問題。", "的解決", DE_ADV),
+        ("彎彎的楊柳的稀疏的倩影。", "的楊柳", DE_ATTR),
+        ("那個長得像他的人。", "得像", DE_COMP),
+        ("我挑了一座長的像。", "的像", DE_ATTR),
+        ("橫貫公路的再度坍方。", "的再度", DE_ATTR),
+        ("這是一個成功的發明家。", "的發明家", DE_ATTR),
+    ],
+)
+def test_l2_de_roles_use_visible_original_coordinates(tokenizer, text, marker, role):
+    result = normalize(text, tokenizer)
+    position = text.index(marker)
+    assert {"surface": marker[0], "true_role": role, "char_idx": position} in result.de_normalization_map
+    _assert_offsets(text, result)
+
+
 def test_empty_and_invalid_input(tokenizer):
     assert normalize("", tokenizer) == L0Result("", [], [], [], [])
     with pytest.raises(L0Error, match="字串"):
