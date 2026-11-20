@@ -1,4 +1,4 @@
-"""原外部 L1 題庫與 A/B 批的回歸基準。
+"""原外部 L1 題庫與 A/B/R 批的回歸基準。
 
 每題先跑 L5 預檢，再依題庫記錄的作者裁決執行 L1。命中須規則、span、severity 全同。
 禁命中不得重疊，零診斷對照須全句無診斷。
@@ -21,6 +21,7 @@ BANK_SIZES = {
     "l1_question_bank.json": 36,
     "l1_question_bank_a.json": 36,
     "l1_question_bank_b.json": 60,
+    "l1_question_bank_r.json": 60,
 }
 
 

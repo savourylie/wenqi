@@ -17,6 +17,7 @@ PASSIVE = "L1_PASSIVE_BEI"
 
 
 def scan(text, *, profile="essay", frozen=(), disabled=()):
+    assert l5_handoff(text)["mode"] == "L5_PREFLIGHT"
     settings = {
         "effective_profile": profile,
         "profile_config": DEFAULT_PROFILES[profile],
@@ -357,6 +358,7 @@ def test_degree_heads_skip_non_property_nouns_and_frozen_terms():
     ("這份提案不具有前瞻性。", "沒有遠見"),
     ("這份提案並不具有前瞻性。", "並沒有遠見"),
     ("這項設計呈現出極低的穩定度。", "極不穩定"),
+    ("語音導覽呈現出不太理想的可聽性。", "不太動聽"),
 ])
 def test_jargon_rewrites_preserve_degree_negation_and_comparison(text, phrase):
     issue, = issues(scan(text))
@@ -370,6 +372,7 @@ def test_jargon_rewrites_preserve_degree_negation_and_comparison(text, phrase):
     ("上個月才被推選為籌備會主委的林小姐只好先暫停發包。", "social", "被推選為籌備會主委"),
     ("但新版表單至今仍未被法務組核准。", "tech", "新版表單至今仍未被法務組核准"),
     ("該帳號已於十分鐘前被管理員鎖定。", "tech", "該帳號已於十分鐘前被管理員鎖定"),
+    ("我沒想到那份合作備忘錄至今仍未被董事會核准。", "essay", "那份合作備忘錄至今仍未被董事會核准"),
 ])
 def test_passive_covers_new_verbs_negation_and_cues(text, profile, span):
     issue, = issues(scan(text, profile=profile))
@@ -590,11 +593,12 @@ def test_l5_handoff_rejected_candidate_keeps_the_l1_diagnosis():
     ("轉機櫃檯的漫長等待讓現場旅客感到精疲力竭。", "現場旅客"),
     ("月台班次的臨時變動讓候車乘客感到相當無奈。", "候車乘客"),
     ("推薦引擎的突然變動讓內容編輯連夜重排首頁專題。", "內容編輯"),
+    ("小鎮人口的持續減少改變了老店主對未來的想像。", "老店主"),
 ])
 def test_inanimate_person_object_keeps_attributive_modifiers(text, person):
     found = [i for i in issues(scan(text)) if i["rule_id"] == INANIMATE]
     assert found, f"未命中無靈主語：{text}"
-    assert person in found[0]["instruction"]
+    assert f"以「{person}」作主詞" in found[0]["instruction"]
 
 
 def test_inanimate_person_scan_stops_at_the_predicate_boundary():
@@ -609,6 +613,8 @@ def test_inanimate_person_scan_stops_at_the_predicate_boundary():
     ("帳務組將核心帳本的夜間盤點排在每週日凌晨三點執行。", "核心帳本的夜間盤點"),
     ("颱風的提早來襲打亂了離島船班表。", "颱風的提早來襲"),
     ("金流閘道的頻繁逾時拖慢了整體結帳流程。", "金流閘道的頻繁逾時"),
+    ("訊號的集中出現打亂了原本的排程。", "訊號的集中出現"),
+    ("網路的延遲影響了時程。", "網路的延遲"),
 ])
 def test_event_covers_compound_nps_temporal_modifiers_and_dictionary_heads(text, span):
     found = [i["span"] for i in issues(scan(text, profile="tech")) if i["rule_id"] == EVENT]

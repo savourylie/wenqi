@@ -1,0 +1,975 @@
+[
+  {
+    "id": "R-01",
+    "profile": "tech",
+    "text": "如果推薦清單仍偏向大品牌，就對最近一週的曝光紀錄進行分析，別急著手動改權重。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對最近一週的曝光紀錄進行分析",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-02",
+    "profile": "essay",
+    "text": "他在日記裡對父親早年的行醫經歷加以詳細記錄，也寫下自己多年來的疑惑。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對父親早年的行醫經歷加以詳細記錄",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-03",
+    "profile": "tech",
+    "text": "值班同仁針對購物車快照的版本差異展開了三輪交叉驗證，排除了序列化問題。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "針對購物車快照的版本差異展開了三輪交叉驗證",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-04",
+    "profile": "social",
+    "text": "消防隊員趕到碼頭後立刻展開充氣救生艇，把落水者接回岸上。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "展開充氣救生艇",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-05",
+    "profile": "essay",
+    "text": "這份口述史訪談仔細記錄了老礦工的生活，沒有刻意美化過往。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "仔細記錄了老礦工的生活",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-06",
+    "profile": "social",
+    "text": "昨夜暴雨造成地下停車場入口積水，警衛只好暫停車輛進入。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "造成地下停車場入口積水",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-07",
+    "profile": "tech",
+    "text": "專案組對冷門商品的退貨原因進行排查，並整理出主要問題。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對冷門商品的退貨原因進行排查",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "對冷門商品的退貨原因進行排查"
+    ]
+  },
+  {
+    "id": "R-08",
+    "profile": "tech",
+    "text": "客服 FAQ 裡的 `給予幫助` 是舊版按鈕文字，設計師已改成「聯絡客服」。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "給予幫助",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-09",
+    "profile": "essay",
+    "text": "山谷裡的旅舍因溪水的突然上升而關閉步道，遊客只得改走公路。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "溪水的突然上升",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-10",
+    "profile": "tech",
+    "text": "供應商的延遲出貨迫使營運團隊重排促銷檔期。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "供應商的延遲出貨",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-11",
+    "profile": "tech",
+    "text": "春季促銷前，值班主管特別提防跨站點退貨申請的集中出現，因為那會塞住人工審核佇列。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "跨站點退貨申請的集中出現",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-12",
+    "profile": "tech",
+    "text": "週三才發布的版本昨天已修補完畢，維運組確認可以恢復更新。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "週三才發布的版本",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-13",
+    "profile": "essay",
+    "text": "她的設計很有辨識度，展覽開幕當天吸引許多人拍照。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "她的設計",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-14",
+    "profile": "social",
+    "text": "攝影師仔細地整理底片，準備送去沖洗。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "仔細地整理",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-15",
+    "profile": "essay",
+    "text": "上游工廠的突然倒塌阻斷了山路，村民改走較遠的舊橋。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "上游工廠的突然倒塌",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "上游工廠的突然倒塌"
+    ]
+  },
+  {
+    "id": "R-16",
+    "profile": "tech",
+    "text": "營運表格的欄名 `會員的突然減少` 已改成「會員流失」，方便統一報表。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "會員的突然減少",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-17",
+    "profile": "social",
+    "text": "新款閱讀器具備出色的可讀性，即使在陽光下也能清楚顯示文字。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備出色的可讀性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-18",
+    "profile": "essay",
+    "text": "這份城市更新提案不具有足夠的前瞻性，居民擔心十年後又得重新施工。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "不具有足夠的前瞻性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-19",
+    "profile": "tech",
+    "text": "新語音導覽在多語言切換時呈現出不太理想的可聽性，策展人決定重錄幾段旁白。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "呈現出不太理想的可聽性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-20",
+    "profile": "essay",
+    "text": "這間陶房具有穩定的溫度，拉坯後的作品能慢慢陰乾。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具有穩定的溫度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-21",
+    "profile": "tech",
+    "text": "翻譯團隊努力保持準確度，遇到歧義時會查對原始語境。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "保持準確度",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-22",
+    "profile": "essay",
+    "text": "這部懸疑小說節奏緊湊，人物也鮮明，讀來十分過癮。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "十分過癮",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-23",
+    "profile": "tech",
+    "text": "重試機制具備高可用性，部署到兩個機房後仍能正常服務。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "具備高可用性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-24",
+    "profile": "social",
+    "text": "這次文字重排讓圖鑑頗具可看性，孩子們翻得津津有味。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "頗具可看性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "可看性"
+    ]
+  },
+  {
+    "id": "R-25",
+    "profile": "social",
+    "text": "搬遷消息傳出後，長者們紛紛到里辦公室詢問交通安排。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "長者們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-26",
+    "profile": "essay",
+    "text": "謝幕時，觀眾們仍坐在原位，直到燈光全亮才起身。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "觀眾們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-27",
+    "profile": "tech",
+    "text": "暴雨過後，工作人員們沿著東側步道逐一檢查欄杆與告示牌。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "工作人員們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-28",
+    "profile": "social",
+    "text": "朋友們在老街口碰面，沿著石階慢慢走到山腰。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "朋友們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-29",
+    "profile": "social",
+    "text": "這場映後座談是三場影展論壇之一，導演會在映後留下來談創作。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "三場影展論壇之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-30",
+    "profile": "essay",
+    "text": "嵇康是竹林七賢之一，他的文章至今仍值得細讀。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "竹林七賢之一",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-31",
+    "profile": "essay",
+    "text": "散場後，人們沿著河堤慢慢走回市區。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "人們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "人們"
+    ]
+  },
+  {
+    "id": "R-32",
+    "profile": "social",
+    "text": "同學們在畢業前合寫了一本班刊，封面由美術社設計。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "同學們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-33",
+    "profile": "social",
+    "text": "休息時間的減少讓實習生疲於奔命，主管已調整排班。",
+    "known_gap": "TICKET-016：L0 將名詞詞組「休息時間」後的「的」判為 DE_ADV，造成 L1 漏報",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "休息時間的減少讓實習生疲於奔命",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-34",
+    "profile": "essay",
+    "text": "小鎮人口的持續減少改變了老店主對未來的想像，街上的招牌也逐年少了。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "小鎮人口的持續減少改變了老店主對未來的想像",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-35",
+    "profile": "tech",
+    "text": "供應商報價的反覆變動迫使採購主管重做整季預算，原先談好的折扣也得重新議價。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "供應商報價的反覆變動迫使採購主管重做整季預算",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-36",
+    "profile": "tech",
+    "text": "倉儲費率的變動使得預估成本多出三成，財務部正重新估算運費。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "倉儲費率的變動",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "倉儲費率的變動使得預估成本多出三成",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-37",
+    "profile": "essay",
+    "text": "因雨季水位的變動，露營區改採預約制，管理員也加強巡查。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "雨季水位的變動",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "因雨季水位的變動",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-38",
+    "profile": "social",
+    "text": "市集租金突然上漲迫使攤商重新印製價目表，主辦方還沒提出補助方案。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "市集租金突然上漲迫使攤商重新印製價目表",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-39",
+    "profile": "tech",
+    "text": "付款服務的變動讓顧客必須重新輸入資料，團隊已補上操作說明。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "付款服務的變動",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "付款服務的變動讓顧客必須重新輸入資料",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-40",
+    "profile": "social",
+    "text": "加班時數的增加讓設計師無法準時下班，工作室正在調整交期。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "加班時數的增加讓設計師無法準時下班",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "加班時數的增加",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "加班時數的增加"
+    ]
+  },
+  {
+    "id": "R-41",
+    "profile": "essay",
+    "text": "策展人原以為場地已談妥，沒想到那份展覽合作備忘錄已被董事會否決，租金得重新計算。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "那份展覽合作備忘錄已被董事會否決",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-42",
+    "profile": "social",
+    "text": "因颱風警報，原定週末的戶外電影被延後了，主辦方改在網路公布新日期。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被延後了",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-43",
+    "profile": "tech",
+    "text": "新提交的退款憑證直到截稿前仍未被第三方稽核員接受，財會只得補上原始交易紀錄。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "新提交的退款憑證直到截稿前仍未被第三方稽核員接受",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-44",
+    "profile": "social",
+    "text": "老街的鐵皮屋頂被強風吹毀，店家正找師傅修繕。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被強風吹毀",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-45",
+    "profile": "tech",
+    "text": "主管在會議上駁回了臨時加價申請，並要求業務重新報價。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "駁回了臨時加價申請",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-46",
+    "profile": "essay",
+    "text": "那張海報被雨淋濕後黏在牆上，路過的行人都沒注意到。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "被雨淋濕",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-47",
+    "profile": "social",
+    "text": "新版開幕海報已被公關團隊採用，策展人打算在入口加印一份。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "新版開幕海報已被公關團隊採用",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "新版開幕海報已被公關團隊採用"
+    ]
+  },
+  {
+    "id": "R-48",
+    "profile": "tech",
+    "text": "測試文件將 `至今仍未被核准` 列為錯誤訊息範例，正式公告只寫「審查中」。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "至今仍未被核准",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-49",
+    "profile": "tech",
+    "text": "社群小編對活動報名頁進行了全面優化，但改版後的字級仍不具備足夠的可讀性。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "對活動報名頁進行了全面優化",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "不具備足夠的可讀性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-50",
+    "profile": "social",
+    "text": "倉庫的突然倒塌讓居民很震驚，附近民眾們也發現封路通知尚未被公告。",
+    "must_hit": [
+      {
+        "rule_id": "L1_EVENT_NOMINALIZATION",
+        "span": "倉庫的突然倒塌",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "民眾們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_PASSIVE_BEI",
+        "span": "尚未被公告",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-51",
+    "profile": "essay",
+    "text": "票務系統的變動讓站務人員重新核對每張車票，乘客們在月台排起長隊。",
+    "must_hit": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "票務系統的變動讓站務人員重新核對每張車票",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "乘客們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-52",
+    "profile": "tech",
+    "text": "票務系統的變動讓站務人員重新核對每張車票，乘客們在月台排起長隊。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "乘客們",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [
+      {
+        "rule_id": "L1_INANIMATE_SUBJECT",
+        "span": "票務系統的變動讓站務人員重新核對每張車票",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-53",
+    "profile": "tech",
+    "text": "音訊團隊上午進行測試，下午更換線材後又進行測試，終於找出雜音來源。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行測試",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行測試",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-54",
+    "profile": "social",
+    "text": "開場前，聽眾們在門口排隊；散場後，聽眾們留在走廊交流心得。",
+    "must_hit": [
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "聽眾們",
+        "occurrence": 1,
+        "severity": null
+      },
+      {
+        "rule_id": "L1_REDUNDANT_PLURAL_ZHIYI",
+        "span": "聽眾們",
+        "occurrence": 2,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-55",
+    "profile": "essay",
+    "text": "這本攝影集頗具可看性，幾張夜景照片尤其令人難忘。",
+    "must_hit": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "頗具可看性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-56",
+    "profile": "essay",
+    "text": "這本攝影集頗具可看性，幾張夜景照片尤其令人難忘。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_PSEUDO_JARGON",
+        "span": "頗具可看性",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "可看性"
+    ]
+  },
+  {
+    "id": "R-57",
+    "profile": "tech",
+    "text": "發表前，模型團隊決定先進行 Fine-tuning，改善多語言摘要的表現。",
+    "must_hit": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 Fine-tuning",
+        "occurrence": 1,
+        "severity": "info"
+      }
+    ],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-58",
+    "profile": "tech",
+    "text": "發表前，模型團隊決定先進行 Fine-tuning，改善多語言摘要的表現。",
+    "must_hit": [],
+    "must_skip": [
+      {
+        "rule_id": "L1_WEAK_VERB_NOMINALIZATION",
+        "span": "進行 Fine-tuning",
+        "occurrence": 1,
+        "severity": null
+      }
+    ],
+    "ephemeral_whitelist": [
+      "進行 Fine-tuning"
+    ]
+  },
+  {
+    "id": "R-59",
+    "profile": "essay",
+    "text": "天剛亮，我沿著海岸往北走，鹹鹹的風吹得眼睛發澀。轉過岬角後，燈塔終於出現在視線裡，海面上只有幾艘漁船。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  },
+  {
+    "id": "R-60",
+    "profile": "tech",
+    "text": "客服收到異常訂單後，先核對付款紀錄，再請工程師查看日誌。工程師找到逾時原因，修好連線設定後，下午便恢復服務。當晚沒有新的申訴。",
+    "must_hit": [],
+    "must_skip": [],
+    "ephemeral_whitelist": []
+  }
+]
