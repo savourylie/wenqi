@@ -347,6 +347,21 @@ def test_degree_heads_take_bare_property_nouns(text, span, suggestion):
 def test_degree_heads_skip_non_property_nouns_and_frozen_terms():
     assert not issues(scan("這場演出頗具規模，更具觀賞價值。"))
     assert not issues(scan("扣款 API 更具高可用性。", profile="tech"))
+    assert not issues(scan("這道堤防具備足夠的高度。", profile="tech"))
+
+
+@pytest.mark.parametrize(("text", "phrase"), [
+    ("這間獨立書店頗具知名度。", "頗有名"),
+    ("新版說明書頗具可讀性。", "頗好讀"),
+    ("整體架構比舊版更具前瞻性。", "更有遠見"),
+    ("這份提案不具有前瞻性。", "沒有遠見"),
+    ("這份提案並不具有前瞻性。", "並沒有遠見"),
+    ("這項設計呈現出極低的穩定度。", "極不穩定"),
+])
+def test_jargon_rewrites_preserve_degree_negation_and_comparison(text, phrase):
+    issue, = issues(scan(text))
+    assert issue["rule_id"] == JARGON
+    assert f"「{phrase}」" in issue["instruction"]
 
 
 @pytest.mark.parametrize(("text", "profile", "span"), [
@@ -368,6 +383,23 @@ def test_passive_negation_and_cues_survive_the_rewrite():
     issue, = issues(scan("他從不被拒絕入場。"))
     assert "保留「從」" in issue["instruction"]
     assert "沒有人拒絕" in issue["instruction"]
+
+
+def test_temporary_lock_preserves_the_time_and_unknown_agent():
+    text = "您好，由於偵測到異常登入，您的帳號已被暫時鎖定，請依指示重新驗證身分。"
+    issue, = issues(scan(text, profile="social"))
+    assert (issue["rule_id"], issue["span"]) == (PASSIVE, "已被暫時鎖定")
+    assert "保留「已」" in issue["instruction"]
+    assert "「暫時鎖定」" in issue["instruction"]
+    assert "施事者維持未明" in issue["instruction"]
+
+
+def test_temporary_lock_with_an_agent_preserves_the_modifier():
+    text = "這個帳號已被管理員暫時鎖定。"
+    issue, = issues(scan(text, profile="tech"))
+    assert (issue["rule_id"], issue["span"]) == (PASSIVE, text.removesuffix("。"))
+    assert "施事「管理員」" in issue["instruction"]
+    assert "「暫時鎖定」" in issue["instruction"]
 
 
 def test_passive_title_object_is_protected_in_must_keep():

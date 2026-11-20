@@ -502,7 +502,7 @@ _JARGON_LITERAL_HEADS = {"具有", "頗具", "更具", "富於"}
 _JARGON_GRAY_HEADS = {"具有", "具備", "呈現出", "更具", "頗具"}
 # 「更具／頗具」的程度詞彙化在頭詞裡，改寫時要還原成副詞。
 _JARGON_HEAD_DEGREE = {"更具": "更", "頗具": "頗"}
-_ORDINARY_NOUNS = {"制度", "態度", "程度", "尺度", "角度", "年度", "溫度", "能見度"}
+_ORDINARY_NOUNS = {"制度", "態度", "程度", "尺度", "角度", "年度", "溫度", "能見度", "高度"}
 _DEGREE_PREFIX = "很|非常|相當|較|頗|甚|極|極其|偏"
 _DEGREE = re.compile(rf"({_DEGREE_PREFIX})?[高大強低小弱]")
 _LOW_DEGREE = re.compile(rf"(?:不(?:太|算|很|夠)?[高大強]|(?:{_DEGREE_PREFIX})?[低小弱])")
@@ -518,15 +518,36 @@ def _property_word(term: str) -> str:
     return "容易" + term[1:-1] if term.startswith("可") else term[:-1]
 
 
-def _jargon_rewrite(term: str, degree: str, lexicons: _Lexicons, *, technical: bool) -> str:
+def _jargon_rewrite(
+    term: str, degree: str, lexicons: _Lexicons, *, technical: bool, head_degree: str = "",
+) -> str:
     if _LOW_DEGREE.fullmatch(degree):
-        return _LOW_DEGREE_WORDING.get(term, "不太" + _property_word(term))
+        replacement = _LOW_DEGREE_WORDING.get(term, "不太" + _property_word(term))
+        if degree.startswith("極"):
+            return {"知名度": "名氣極小", "前瞻性": "極缺乏遠見"}.get(
+                term, replacement.replace("不太", "極不", 1),
+            )
+        return replacement
     if degree in _SUFFICIENT_DEGREES:
         return "夠" + _property_word(term)
+
+    qualifier = head_degree or ("很" if degree == "高度" else "")
     if term == "可讀性":
+        if qualifier:
+            return qualifier + ("易讀" if technical else "好讀")
         return "清晰易讀" if technical else "很好讀"
+
     options = lexicons.jargon.get(term, ())
-    return options[0] if options else {"嚴重性": "情況嚴重", "必要性": "有必要", "力度": "有力"}.get(term, "")
+    if options:
+        # 詞庫的「更有遠見／更耐看」是有比較語境的範例。
+        replacement = options[0].removeprefix("更")
+    else:
+        replacement = {"嚴重性": "情況嚴重", "必要性": "有必要", "力度": "有力"}.get(term, "")
+    if not replacement or not qualifier:
+        return replacement
+    if replacement.startswith("情況"):
+        return f"情況{qualifier}{replacement.removeprefix('情況')}"
+    return qualifier + replacement.removeprefix("很")
 
 
 def _property_ends_here(tokens: Sequence[Token], end: int) -> bool:
@@ -557,7 +578,7 @@ def _jargon_target(
                 degree = text[head.end():middle[-1].start_char].strip()
                 if all(token.pos not in {"c", "p", "x"} for token in middle):
                     return _JargonTarget(literal[0], literal.end(), degree)
-            if not degree or _DEGREE.fullmatch(degree) or _LOW_DEGREE.fullmatch(degree) or (
+            if not degree or degree == "高度" or _DEGREE.fullmatch(degree) or _LOW_DEGREE.fullmatch(degree) or (
                 middle and all(token.pos in _MODIFIER_POS for token in middle)
             ):
                 return _JargonTarget(literal[0], literal.end(), degree)
@@ -567,6 +588,9 @@ def _jargon_target(
     modifiers = []
     for index, token in enumerate(tail):
         word = token.surface
+        if word == "高度" and not modifiers:
+            modifiers.append(word)
+            continue
         # 「更具／頗具」自帶程度，後接裸名詞也算灰區；其他頭詞仍需修飾語。
         if (modifiers or head[0] in _JARGON_HEAD_DEGREE) and token.pos.startswith("n"):
             # 合併連續的名詞片段，例如「語意／保真度」，保留指標完整詞名。
@@ -665,14 +689,18 @@ def _jargon_issues(
                 replacements=(head.span(),),
             )
             continue
-        replacement = _jargon_rewrite(word, degree, lexicons, technical=technical)
         source = text[start:end]
         # 頭詞自帶程度（更具／頗具）且沒有其他修飾語時，改寫要補回該程度。
         head_degree = _JARGON_HEAD_DEGREE.get(head[0], "") if not degree else ""
+        replacement = _jargon_rewrite(word, degree, lexicons, technical=technical, head_degree=head_degree)
         if replacement:
-            instruction = f"可將「{source}」直接寫成「{negation}{head_degree}{replacement}」，保留原句表達的程度。"
+            if negation and replacement.startswith("有"):
+                replacement = f"{negation.removesuffix('不')}沒{replacement}"
+            else:
+                replacement = negation + replacement
+            instruction = f"可將「{source}」直接寫成「{replacement}」，保留原句表達的程度。"
         else:
-            strength = _DEGREE.fullmatch(degree)
+            strength = _DEGREE.fullmatch("很高" if degree == "高度" else degree)
             qualifier = (strength[1] or "很") if strength else head_degree
             instruction = (
                 f"去掉「{head[0]}」和「{word[-1]}」的名詞框架。用「{negation}{qualifier}{_property_word(word)}」"
@@ -769,7 +797,7 @@ def _plural_issues(clause: _Clause) -> Iterator[Issue | None]:
 _BEI = re.compile("被")
 _NATURAL_PASSIVE = re.compile(r"\s*(?:殺|捕|毀|淘汰)")
 _PASSIVE_PREDICATE = re.compile(
-    r"(?P<adverb>(?:(?:徹底|完全|嚴重|正式|公開|一再|一度|再次|多次|直接|一致|普遍|當場|立即|堅決)\s*)*)"
+    r"(?P<adverb>(?:(?:徹底|完全|嚴重|暫時|正式|公開|一再|一度|再次|多次|直接|一致|普遍|當場|立即|堅決)\s*)*)"
     r"(?P<verb>接受|拒絕|採用|發現|認為|嚇倒|懷疑|准許|推選為|選為|指出|詢及|升為|改變|核准|駁回|鎖定|要求|否決|公告|歸類為|歸類|延後)"
 )
 _NATIVE_PASSIVES = {
@@ -857,8 +885,8 @@ def _passive_issues(clause: _Clause) -> Iterator[Issue | None]:
                 first += 1
             start = members[first].start_char
             instruction = (
-                f"讓施事「{agent}」作主詞，用「{verb}」作動詞，把原受事移到動詞之後。"
-                "保留原句的否定、情態與程度。"
+                f"讓施事「{agent}」作主詞，用「{predicate[0]}」作謂語，把原受事接在後面。"
+                "保留原句的否定、時間、情態與程度。"
             )
         else:
             # 向左納入時間／語氣副詞（「至今仍未被核准」），到受詞或焦點副詞為止。
@@ -900,6 +928,9 @@ def _passive_issues(clause: _Clause) -> Iterator[Issue | None]:
                 elif verb == "改變" and not negative:
                     replacement = text[predicate.start():verb_end]
                     instruction = f"{preserve}去掉「被」，用「{replacement}」直接描述原受事的變化。"
+                elif verb == "鎖定" and not negative:
+                    replacement = text[predicate.start():verb_end]
+                    instruction = f"{preserve}用「{replacement}」描述原受事的狀態，施事者維持未明。"
                 elif verb == "延後":
                     replacement = text[predicate.start():verb_end]
                     instruction = (
