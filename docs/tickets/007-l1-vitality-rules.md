@@ -1,10 +1,10 @@
 # [TICKET-007] L1 規則引擎：詞性與語態重心 (l1_vitality.py)
 
 ## Status
-`blocked`
+`done`
 
 ## Dependencies
-- Requires: #006
+- Requires: #006 ✅
 
 ## Description
 實作 `engine/rules/l1_vitality.py`：依 §5.2 第一層規則矩陣偵測「化動為靜」病灶——弱動詞＋動名詞（文字義肢）、短句名物化、偽術語、冗餘複數與「之一」、無靈主語、生硬被動。每條 Issue 附帶 `theoretical_basis`（注入 Part I 語言學理據供 LLM 改寫）與具體轉換指令。白名單 frozen 詞在本層必須全程豁免。

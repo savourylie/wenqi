@@ -384,6 +384,139 @@ def test_l5_preflight_then_l4_cli_respects_the_authors_decisions(state_dir):
     )
 
 
+def run_golden_case(text, *, profile, ephemeral_whitelist):
+    review = payload(run_cli("--mode", "preflight", "--stdin", text=text))
+    assert review["mode"] == "L5_PREFLIGHT"
+    assert review["content_hash"] == state.content_hash(text)
+    assert review["suggested_profile"] in state.DEFAULT_PROFILES
+    assert isinstance(review["suspect_terms_for_review"], list)
+
+    args = ["--mode", "lint", "--stdin", "--layer", "ALL", "--profile", profile]
+    if ephemeral_whitelist:
+        args.extend(("--ephemeral-whitelist", ",".join(ephemeral_whitelist)))
+    result = payload(run_cli(*args, text=text))
+    assert (result["mode"], result["requested_layer"], result["effective_profile"]) == (
+        "LINT", "ALL", profile,
+    )
+    diagnostic, = result["diagnostics"]
+    assert (diagnostic["sentence_id"], diagnostic["target_sentence"]) == ("L1_S1", text)
+
+    frozen = diagnostic["frozen_whitelist_hits"]
+    keep = diagnostic["must_keep_content_words"]
+    assert isinstance(frozen, list) and isinstance(keep, list)
+    assert set(frozen) <= set(keep)
+    assert all(isinstance(word, str) and word and word in text for word in keep)
+    normalizations = diagnostic["de_normalization_map"]
+    assert isinstance(normalizations, list)
+    for entry in normalizations:
+        index = entry["char_idx"]
+        assert 0 <= index < len(text)
+        assert text[index] == entry["surface"]
+        assert entry["true_role"] in {"DE_ATTR", "DE_ADV", "DE_COMP"}
+
+    counts = dict.fromkeys(("L1", "L2", "L3", "L4"), 0)
+    for issue in diagnostic["issues"]:
+        layer = issue["layer"]
+        assert layer in {"L0", "L1", "L2", "L3", "L4"}
+        counts[layer] = counts.get(layer, 0) + 1
+        assert isinstance(issue["priority"], int)
+        for field in ("rule_id", "span", "pos_pattern", "theoretical_basis", "instruction"):
+            assert isinstance(issue[field], str) and issue[field].strip(), (field, issue)
+        span = issue["span"]
+        assert span in text
+        if "char_idx" in issue:
+            index = issue["char_idx"]
+            assert 0 <= index < len(text) and text[index:index + len(span)] == span
+    assert result["summary"] == {
+        "total_sentences": 1,
+        "flagged_sentences": len(result["diagnostics"]),
+        "issue_counts": counts,
+    }
+    return review, result
+
+
+def assert_golden_spans(diagnostic, expected):
+    text = diagnostic["target_sentence"]
+    actual = {
+        (issue["rule_id"], issue["span"], issue.get("char_idx"))
+        for issue in diagnostic["issues"]
+    }
+    assert {(rule, span, text.index(span)) for rule, span in expected} <= actual
+
+
+def test_golden_suite_case_1_frozen_term_and_overlapping_frames(state_dir):
+    text = "在系統遷移的過程當中，我們對有關檢索模組的高可用性的問題進行了詳細的研究。"
+    review, result = run_golden_case(text, profile="tech", ephemeral_whitelist=())
+    diagnostic, = result["diagnostics"]
+    assert "高可用性" in review["active_whitelist_terms"]
+    assert "高可用性" in diagnostic["frozen_whitelist_hits"]
+    assert "高可用性" in diagnostic["must_keep_content_words"]
+    assert all(issue["rule_id"] != "L1_PSEUDO_JARGON" for issue in diagnostic["issues"])
+    assert_golden_spans(diagnostic, (
+        ("L3_PREPOSITIONAL_FRAME", "在系統遷移的過程當中"),
+        ("L3_PREPOSITIONAL_FRAME", "有關檢索模組的高可用性的問題"),
+        ("L1_WEAK_VERB_NOMINALIZATION", "對有關檢索模組的高可用性的問題進行了詳細的研究"),
+    ))
+
+
+@pytest.mark.parametrize(("profile", "modifier_limit"), [("essay", 12), ("tech", 18)])
+def test_golden_suite_case_2_de_roles_and_profile_threshold(state_dir, profile, modifier_limit):
+    text = "老師苦口婆心的勸了那個長得像你兄弟說話也有點像他的陌生男人半天，但他還是跑的很快。"
+    _, result = run_golden_case(text, profile=profile, ephemeral_whitelist=())
+    diagnostic, = result["diagnostics"]
+    assert result["thresholds_applied"]["max_pre_modifier_len"] == modifier_limit
+    roles = {
+        entry["char_idx"]: (entry["surface"], entry["true_role"])
+        for entry in diagnostic["de_normalization_map"]
+    }
+    assert roles[text.index("的勸")] == ("的", "DE_ADV")
+    complement_index = text.index("的很快")
+    assert roles[complement_index] == ("的", "DE_COMP")
+    assert any(
+        (issue["rule_id"], issue["layer"], issue["span"], issue.get("char_idx"),
+         issue.get("suggestion")) == ("L0_TYPO_DE_COMP", "L0", "的", complement_index, "得")
+        for issue in diagnostic["issues"]
+    )
+    assert_golden_spans(diagnostic, (("L2_ADVERB_DI_OVERUSE", "苦口婆心的勸"),))
+    if profile == "essay":
+        assert_golden_spans(diagnostic, (
+            ("L2_LEFT_BRANCH_OVERLOAD", "長得像你兄弟說話也有點像他的陌生男人"),
+        ))
+    else:
+        assert all(issue["rule_id"] != "L2_LEFT_BRANCH_OVERLOAD" for issue in diagnostic["issues"])
+
+
+def test_golden_suite_case_3_cause_nominalization_pronoun_and_passive(state_dir):
+    text = "由於他的收入的減少，使得他的生活方式被徹底改變了。"
+    _, result = run_golden_case(text, profile="essay", ephemeral_whitelist=())
+    diagnostic, = result["diagnostics"]
+    assert_golden_spans(diagnostic, (
+        ("L3_CAUSAL_MALFORMED", "由於他的收入的減少，使得"),
+        ("L1_EVENT_NOMINALIZATION", "他的收入的減少"),
+        ("L1_PASSIVE_BEI", "被徹底改變了"),
+    ))
+    assert all(issue["rule_id"] != "L1_INANIMATE_SUBJECT" for issue in diagnostic["issues"])
+    assert any(
+        (issue["rule_id"], issue["span"], issue.get("char_idx")) == (
+            "L4_REDUNDANT_PRONOUNS", "他的", text.rindex("他的"),
+        )
+        for issue in diagnostic["issues"]
+    )
+
+
+def test_golden_suite_case_4_unapproved_term_and_overlapping_rules(state_dir):
+    text = "這套架構比舊版起步更早及邁步更快，在灰暗的淒冷的天空下具有很高的可讀性。"
+    review, result = run_golden_case(text, profile="essay", ephemeral_whitelist=())
+    diagnostic, = result["diagnostics"]
+    assert "可讀性" in {item["term"] for item in review["suspect_terms_for_review"]}
+    assert "可讀性" not in diagnostic["frozen_whitelist_hits"]
+    assert_golden_spans(diagnostic, (
+        ("L3_CONJUNCTION_MISUSE", "起步更早及邁步更快"),
+        ("L2_DE_CHAIN_NOISE", "灰暗的淒冷的天空"),
+        ("L1_PSEUDO_JARGON", "具有很高的可讀性"),
+    ))
+
+
 def test_lint_keeps_unpunctuated_prose_across_block_boundaries(state_dir):
     text = "> 引文應略過。\n第一段沒句號\n~~~\n略過！\n~~~\n第二段沒句號\n\n第三段。"
     result = payload(run_cli("--mode", "lint", "--stdin", text=text))
