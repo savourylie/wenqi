@@ -32,3 +32,11 @@
 ## Testing
 - 在 `tests/test_ast_scanner.py` 新增 N02 的 tech（原句與「系統」對照）與 essay 對照，逐份先跑 L5 預檢。
 - 重跑 `python -m pytest -q tests/test_l2_branching.py tests/test_ast_scanner.py` 與全套回歸；基準為 814 項通過、僅 #016 R-33 一項預期失敗。
+
+## As-Built Notes
+
+### 2026-11-21
+
+- `_left_anchor` 略過緊接另一個動詞的 `vn` 詞（「服務載入…」的名物化主語），左錨留給真正的謂語；計數邏輯與門檻不變。略過僅限 `vn`：一般動詞首句（如「討論」標 `v`）保留原錨點行為。
+- N02 tech 原句與「系統」對照皆零診斷；essay 仍命中，範圍為「記錄昨夜閘道攔截異常封包細節的日誌」，不再含「載入這份」。每份輸入先跑 L5 預檢，profile 依題目明寫代表作者裁決。
+- `python -m pytest -q tests/test_l2_branching.py tests/test_ast_scanner.py` 84 項通過；全套回歸 817 項通過，僅 #016 R-33 一項預期失敗（基準 814 加 3 組新對照）。

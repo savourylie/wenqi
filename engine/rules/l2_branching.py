@@ -121,6 +121,10 @@ def _left_anchor(tokens: Sequence[Token]) -> int | None:
                 continue
             break
         if token.pos in _VERBS:
+            next_word = next((t for t in tokens[index + 1:] if not t.is_frozen), None)
+            if token.pos == "vn" and next_word is not None and next_word.pos in _VERBS:
+                # 名物化主語（「服務載入…」）不是謂語，左錨留給真正的動詞。
+                continue
             verb_end = index + 1
     return verb_end
 

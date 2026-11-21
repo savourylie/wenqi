@@ -517,6 +517,41 @@ def test_golden_suite_case_4_unapproved_term_and_overlapping_rules(state_dir):
     ))
 
 
+N02_TEXT = "服務載入這份記錄昨夜閘道攔截異常封包細節的日誌，隨即比對每筆錯誤碼，並把結果寫入備份表。"
+
+
+@pytest.mark.parametrize("subject", ["服務", "系統"])
+def test_n02_nominal_subject_left_branch_within_tech_threshold(state_dir, subject):
+    text = N02_TEXT.replace("服務", subject, 1)
+    review = payload(run_cli("--mode", "preflight", "--stdin", text=text))
+    assert review["mode"] == "L5_PREFLIGHT"
+    assert review["content_hash"] == state.content_hash(text)
+
+    result = payload(run_cli(
+        "--mode", "lint", "--stdin", "--layer", "ALL", "--profile", "tech", text=text,
+    ))
+    assert result["thresholds_applied"]["max_pre_modifier_len"] == 18
+    assert result["diagnostics"] == []
+    assert result["summary"] == {
+        "total_sentences": 1,
+        "flagged_sentences": 0,
+        "issue_counts": {"L1": 0, "L2": 0, "L3": 0, "L4": 0},
+    }
+
+
+def test_n02_essay_reports_true_left_branch_span(state_dir):
+    _, result = run_golden_case(N02_TEXT, profile="essay", ephemeral_whitelist=())
+    diagnostic, = result["diagnostics"]
+    assert_golden_spans(diagnostic, (
+        ("L2_LEFT_BRANCH_OVERLOAD", "記錄昨夜閘道攔截異常封包細節的日誌"),
+    ))
+    assert all(
+        not issue["span"].startswith("載入這份")
+        for issue in diagnostic["issues"]
+        if issue["rule_id"] == "L2_LEFT_BRANCH_OVERLOAD"
+    )
+
+
 def test_lint_keeps_unpunctuated_prose_across_block_boundaries(state_dir):
     text = "> 引文應略過。\n第一段沒句號\n~~~\n略過！\n~~~\n第二段沒句號\n\n第三段。"
     result = payload(run_cli("--mode", "lint", "--stdin", text=text))
