@@ -270,7 +270,9 @@ def _restore_tokens(
     return restored
 
 
-def _is_complement(left: Token, right: Token, right2: Optional[Token]) -> bool:
+def _is_complement(
+    left: Token, marker: str, right: Token, right2: Optional[Token], right3: Optional[Token]
+) -> bool:
     if left.pos not in {"v", "a"} or left.surface in _MODAL_VERBS:
         return False
 
@@ -280,7 +282,12 @@ def _is_complement(left: Token, right: Token, right2: Optional[Token]) -> bool:
             unicodedata.category(char).startswith("P") for char in right2.surface
         ):
             return True
-        return right2.pos in _COMPLEMENT_ADJECTIVE_POS or right2.surface in _RESULT_STATES
+        if right2.pos in _COMPLEMENT_ADJECTIVE_POS or right2.surface in _RESULT_STATES:
+            return True
+        # jieba 把「生動」標為 vn。「選的十分生動的故事」有兩個相鄰的定語。
+        return right2.pos == "vn" and (
+            marker != "的" or right3 is None or right3.surface != "的"
+        )
 
     # 「很多書」、「更新內容」的首詞也可能以程度副詞的字開頭。
     if right2 is not None and right2.pos in _NOUN_POS:
@@ -481,6 +488,7 @@ def _normalize_de(
         left = tokens[i - 1] if i >= 1 else None
         right = tokens[i + 1] if i + 1 < len(tokens) else None
         right2 = tokens[i + 2] if i + 2 < len(tokens) else None
+        right3 = tokens[i + 3] if i + 3 < len(tokens) else None
         long_start = long_adverbial_start(tokens, i) if token.surface in _ADVERB_MARKERS else None
         long_adverbial = long_start is not None and _is_long_adverbial(tokens, i, long_start)
         if left is not None:
@@ -495,7 +503,7 @@ def _normalize_de(
                 token.surface == "得" and left.surface == "長" and right.pos == "v"
                 and right.surface in {"像", "好像"} and _joined(left, token) and _joined(token, right)
             )
-            if likeness_complement or _is_complement(left, right, right2):
+            if likeness_complement or _is_complement(left, token.surface, right, right2, right3):
                 role = DE_COMP
             elif long_adverbial or _is_adverbial(tokens[i - 2] if i >= 2 else None, left, right, right2):
                 role = DE_ADV

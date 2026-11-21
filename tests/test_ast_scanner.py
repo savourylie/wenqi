@@ -10,6 +10,7 @@ import pytest
 
 from engine import state_manager as state
 from engine.ast_scanner import lint
+from engine.l0_normalizer import DE_COMP, normalize
 from engine.rules import l1_vitality, l3_logic
 
 
@@ -384,7 +385,7 @@ def test_l5_preflight_then_l4_cli_respects_the_authors_decisions(state_dir):
     )
 
 
-def run_golden_case(text, *, profile, ephemeral_whitelist):
+def run_preflight_then_all(text, *, profile, ephemeral_whitelist):
     review = payload(run_cli("--mode", "preflight", "--stdin", text=text))
     assert review["mode"] == "L5_PREFLIGHT"
     assert review["content_hash"] == state.content_hash(text)
@@ -397,6 +398,13 @@ def run_golden_case(text, *, profile, ephemeral_whitelist):
     result = payload(run_cli(*args, text=text))
     assert (result["mode"], result["requested_layer"], result["effective_profile"]) == (
         "LINT", "ALL", profile,
+    )
+    return review, result
+
+
+def run_golden_case(text, *, profile, ephemeral_whitelist):
+    review, result = run_preflight_then_all(
+        text, profile=profile, ephemeral_whitelist=ephemeral_whitelist,
     )
     diagnostic, = result["diagnostics"]
     assert (diagnostic["sentence_id"], diagnostic["target_sentence"]) == ("L1_S1", text)
@@ -550,6 +558,33 @@ def test_n02_essay_reports_true_left_branch_span(state_dir):
         for issue in diagnostic["issues"]
         if issue["rule_id"] == "L2_LEFT_BRANCH_OVERLOAD"
     )
+
+
+N03_TEXT = "聽完我的建議，她漸漸地放下焦慮，把採訪筆記寫得很生動，並決定先去淡水、九份與鹿港三座老城之一。"
+
+
+def test_n03_accepts_correct_complement_marker(state_dir):
+    _, result = run_preflight_then_all(N03_TEXT, profile="essay", ephemeral_whitelist=())
+
+    assert result["diagnostics"] == []
+    assert {
+        "char_idx": N03_TEXT.index("得很生動"),
+        "surface": "得",
+        "true_role": DE_COMP,
+    } in normalize(N03_TEXT).de_normalization_map
+
+
+def test_n03_reports_wrong_complement_marker(state_dir):
+    text = N03_TEXT.replace("寫得很生動", "寫的很生動")
+    _, result = run_golden_case(text, profile="essay", ephemeral_whitelist=())
+
+    diagnostic, = result["diagnostics"]
+    issue, = diagnostic["issues"]
+    index = text.index("的很生動")
+    assert (issue["rule_id"], issue["layer"], issue["span"], issue["char_idx"], issue["suggestion"]) == (
+        "L0_TYPO_DE_COMP", "L0", "的", index, "得",
+    )
+    assert {"char_idx": index, "surface": "的", "true_role": DE_COMP} in diagnostic["de_normalization_map"]
 
 
 def test_lint_keeps_unpunctuated_prose_across_block_boundaries(state_dir):

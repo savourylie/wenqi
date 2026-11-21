@@ -216,6 +216,7 @@ def test_de_roles_and_typo_diagnostics(tokenizer, text, surface, role):
     [
         ([("說", "v"), ("的", "uj"), ("好", "a"), ("話", "n")], DE_ATTR),
         ([("紅", "a"), ("的", "uj"), ("小", "a"), ("蘋果", "n")], DE_ATTR),
+        ([("選", "v"), ("的", "uj"), ("十分", "m"), ("生動", "vn"), ("的", "uj"), ("故事", "n")], DE_ATTR),
         ([("能", "v"), ("的", "uj"), ("很快", "d")], DE_ATTR),
         ([("會", "v"), ("的", "uj"), ("很快", "d")], DE_ATTR),
         ([("可以", "v"), ("的", "uj"), ("很快", "d")], DE_ATTR),
