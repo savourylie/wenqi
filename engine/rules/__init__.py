@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 class _IssueDetails(TypedDict, total=False):
     char_idx: int
+    suggested_breakpoint: int
     severity: Literal["info"]
     # 僅供 Scanner 彙整句內必留詞，輸出 JSON 時移除。
     _replaceable_token_starts: tuple[int, ...]
@@ -41,12 +42,14 @@ class SentenceContext:
     """句內 Token 和分句共用從 0 起算的 Unicode 字元座標。
 
     text 保留原文長度，遮罩位置以等長 NUL 字元表示。
+    original_text 供跨遮罩的診斷取回原文跨度。
     clause_spans 使用半開區間，依句內原文排序。
     """
 
     text: str
     clause_spans: tuple[tuple[int, int], ...]
     is_paragraph_end: bool
+    original_text: str | None = None
 
 
 Scan = Callable[[Sequence["Token"], SentenceContext, RuleProfile], Sequence[Issue]]

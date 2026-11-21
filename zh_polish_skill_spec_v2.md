@@ -386,6 +386,7 @@ wenqi/
 - `line_number` 是句首所在的原文行號，從 1 起算。`sentence_id` 的 `S` 按句首在同一行的出現順序從 1 編號。`de_normalization_map` 的 `char_idx` 是相對於 `target_sentence` 的 Unicode 字元索引，從 0 起算。
 - 凍結的白名單詞組同時出現在 `frozen_whitelist_hits` 與 `must_keep_content_words`。`--layer ALL` 包含 L0 的補語用字診斷，有命中時 `issue_counts` 會增加 `L0` 計數。指定單層時，`issues` 只回傳該層的命中。
 - L1 的 `span` 是原文片段，`char_idx` 是該片段在 `target_sentence` 中的起始字元索引，從 0 起算。弱動詞接英文動作的提示帶有 `severity` 欄位，值為 `info`。
+- L4 也以 `span` 和 `char_idx` 指向原文。長分句有可信斷點時，`suggested_breakpoint` 為該位置在 `target_sentence` 中從 0 起算的 Unicode 字元索引。找不到可信斷點時，仍回報過長並省略此欄位。重複代詞的指涉有歧義時，指令應請作者先確認同指，再視文意省略。
 
 ```json
 {

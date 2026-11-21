@@ -1,6 +1,6 @@
 # Ticket Index
 
-> **Last updated**: 2026-11-21
+> **Last updated**: 2026-11-25
 >
 > Source: `zh_polish_skill_spec_v2.md`（wenqi v2.0.0 技術與理論規格）．Operation: Create．
 > 分階段依規格 §8.2 路線圖：Milestone 1 基礎建設與 L0/L5 → Milestone 2 四層規則引擎 → Milestone 3 六個 Skills → Milestone 4 E2E Dogfooding。
@@ -9,10 +9,10 @@
 
 | Status | Count |
 | --- | --- |
-| ✅ Done | 6 |
+| ✅ Done | 7 |
 | 🔧 In Progress | 0 |
 | 📋 Pending | 2 |
-| 🚫 Blocked | 8 |
+| 🚫 Blocked | 7 |
 | ⏸️ Deferred | 0 |
 
 ## Phase 1 — 基礎建設與 L0/L5（Milestone 1）
@@ -24,7 +24,7 @@
 | 003 | [TokenizerAdapter 與 JiebaPosAdapter](./003-tokenizer-adapter.md) | `done` | #001 ✅ | 55 tests passed；PR #3 |
 | 004 | [L0 預處理：Markdown 遮罩與的／地／得消歧義](./004-l0-normalizer.md) | `done` | #003 ✅ | 108 tests passed · PR #5 |
 | 005 | [L5 預檢：疑似術語抽取與語體推測](./005-l5-preflight.md) | `done` | #002 ✅, #003 ✅ | 130 tests passed · PR #6 |
-| 006 | [Scanner CLI 與 Diagnostic Payload 契約](./006-scanner-cli-payload-contract.md) | `pending` | #002 ✅, #004 ✅, #005 ✅ | |
+| 006 | [Scanner CLI 與 Diagnostic Payload 契約](./006-scanner-cli-payload-contract.md) | `done` | #002 ✅, #004 ✅, #005 ✅ | 143 tests passed · PR #7 |
 
 ## Phase 2 — 四層規則引擎（Milestone 2）
 
@@ -33,7 +33,7 @@
 | 007 | [L1 規則引擎：詞性與語態重心](./007-l1-vitality-rules.md) | `blocked` | #006 | 可與 008–010 並行 |
 | 008 | [L2 規則引擎：修飾與包孕結構](./008-l2-branching-rules.md) | `blocked` | #006 | 可與 007/009/010 並行 |
 | 009 | [L3 規則引擎：邏輯與銜接機制](./009-l3-logic-rules.md) | `done` | #006 ✅ | L3 回歸 137 項通過 · 盲測 20/20 · [PR #12](https://github.com/savourylie/wenqi/pull/12) |
-| 010 | [L4 規則引擎：篇章呼吸與音律節奏](./010-l4-cadence-rules.md) | `blocked` | #006 | 可與 007–009 並行 |
+| 010 | [L4 規則引擎：篇章呼吸與音律節奏](./010-l4-cadence-rules.md) | `pending` | #006 ✅ | 可與 007–009 並行 |
 | 011 | **[TEST: Checkpoint 1 — Golden Test Suite 全層整合驗證](./011-test-checkpoint-1-golden-suite.md)** | `blocked` | #007, #008, #009 ✅, #010 | Gate: Milestone 2 引擎完成；Skills 開發等待此關卡 |
 
 ## Phase 3 — 六個 Agent Skills（Milestone 3）
