@@ -1,7 +1,7 @@
 # [TICKET-017] L2 左錨修正：名物化主語誤判為謂語（N02 長前飾誤報）
 
 ## Status
-`pending`
+`done`
 
 ## Dependencies
 - Requires: #008 ✅
@@ -11,10 +11,10 @@
 盲測 N02 原文為「服務載入這份記錄昨夜閘道攔截異常封包細節的日誌，隨即比對每筆錯誤碼，並把結果寫入備份表。」。「服務」在句中是主語，但 Jieba 標為 `vn`，`_left_anchor` 把它當成謂語動詞，左錨落在其後，「載入這份」於是被算進左分支：真實前飾「記錄昨夜閘道攔截異常封包細節的」15 字被算成 19 字，超過 `tech` 語體的 18 字門檻，誤報 `L2_LEFT_BRANCH_OVERLOAD`。只把「服務」換成「系統」（`n`），同一句就零診斷。誤報會叫作者拆掉符合語體門檻的句子，直接傷害診斷可信度；#012、#013 的 SKILL.md 改寫指令建立在診斷輸出上，必須先修正。
 
 ## Acceptance Criteria
-- [ ] N02 原句以 `tech` 語體跑 `ALL` 不報 `L2_LEFT_BRANCH_OVERLOAD`，且與「系統」對照句結果一致（零診斷）。
-- [ ] N02 原句以 `essay` 語體（門檻 12）仍報 `L2_LEFT_BRANCH_OVERLOAD`，範圍為「記錄昨夜閘道攔截異常封包細節的日誌」，不再含「載入這份」。
-- [ ] Golden Case 2 的 16 字左分支 essay/tech 對照與既有 L2 驗收不變。
-- [ ] 上述對照以自動化測試固化，可重複執行。
+- [x] N02 原句以 `tech` 語體跑 `ALL` 不報 `L2_LEFT_BRANCH_OVERLOAD`，且與「系統」對照句結果一致（零診斷）。
+- [x] N02 原句以 `essay` 語體（門檻 12）仍報 `L2_LEFT_BRANCH_OVERLOAD`，範圍為「記錄昨夜閘道攔截異常封包細節的日誌」，不再含「載入這份」。
+- [x] Golden Case 2 的 16 字左分支 essay/tech 對照與既有 L2 驗收不變。
+- [x] 上述對照以自動化測試固化，可重複執行。
 
 ## Design Reference
 - [008 L2 規則票](./008-l2-branching-rules.md)
@@ -40,3 +40,4 @@
 - `_left_anchor` 略過緊接另一個動詞的 `vn` 詞（「服務載入…」的名物化主語），左錨留給真正的謂語；計數邏輯與門檻不變。略過僅限 `vn`：一般動詞首句（如「討論」標 `v`）保留原錨點行為。
 - N02 tech 原句與「系統」對照皆零診斷；essay 仍命中，範圍為「記錄昨夜閘道攔截異常封包細節的日誌」，不再含「載入這份」。每份輸入先跑 L5 預檢，profile 依題目明寫代表作者裁決。
 - `python -m pytest -q tests/test_l2_branching.py tests/test_ast_scanner.py` 84 項通過；全套回歸 817 項通過，僅 #016 R-33 一項預期失敗（基準 814 加 3 組新對照）。
+- 修正已合併至 `main`（`6098f8d`）。合併驗收的 N02 三組對照全數通過。 [PR #16](https://github.com/savourylie/wenqi/pull/16)
