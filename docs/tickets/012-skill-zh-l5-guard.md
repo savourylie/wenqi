@@ -1,10 +1,10 @@
 # [TICKET-012] Skill：zh-l5-guard 語體定調與白名單守門員
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #011
+- Requires: #011 ✅
 
 ## Description
 撰寫 `skills/zh-l5-guard/SKILL.md`：改文前的互動式守門員 Skill。呼叫 scanner preflight、解析疑似術語清單，以單輪互動向作者確認語體（tech/social/essay）與每個疑似專有名詞的作用域（Global/Local/Reject），並透過 update-state 寫入白名單。這是防止 L1 誤傷領域術語的第一道防線，也是 wenqi-all Stage 1 的握手對象。
