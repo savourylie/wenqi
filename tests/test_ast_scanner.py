@@ -355,6 +355,35 @@ def test_l5_preflight_then_l2_applies_the_confirmed_title(state_dir):
     assert confirmed["diagnostics"] == []
 
 
+def test_l5_preflight_then_l4_cli_respects_the_authors_decisions(state_dir):
+    golden = "由於他的收入的減少，使得他的生活方式被徹底改變了。"
+    text = f"{golden}\n河溝裏傳出它們焦急的叫聲。"
+    results = []
+    for layer in ("L4", "ALL"):
+        review = payload(run_cli("--mode", "preflight", "--stdin", text=text))
+        assert review["mode"] == "L5_PREFLIGHT"
+        assert review["content_hash"] == state.content_hash(text)
+        # 本題採散文語體，作者核可「它們」暫時凍結。
+        result = payload(run_cli(
+            "--mode", "lint", "--stdin", "--layer", layer, "--profile", "essay",
+            "--ephemeral-whitelist", "它們", text=text,
+        ))
+        assert result["effective_profile"] == "essay"
+        assert result["summary"]["issue_counts"]["L4"] == 1
+        results.append([
+            (diagnostic["target_sentence"], issue)
+            for diagnostic in result["diagnostics"] for issue in diagnostic["issues"]
+            if issue["layer"] == "L4"
+        ])
+
+    assert results[0] == results[1]
+    (sentence, issue), = results[0]
+    assert sentence == golden
+    assert (issue["rule_id"], issue["char_idx"], issue["span"]) == (
+        "L4_REDUNDANT_PRONOUNS", golden.rindex("他的"), "他的",
+    )
+
+
 def test_lint_keeps_unpunctuated_prose_across_block_boundaries(state_dir):
     text = "> 引文應略過。\n第一段沒句號\n~~~\n略過！\n~~~\n第二段沒句號\n\n第三段。"
     result = payload(run_cli("--mode", "lint", "--stdin", text=text))

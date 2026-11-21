@@ -150,6 +150,7 @@ def lint(text: str, settings: dict, *, requested_layer: str = "ALL") -> dict:
                 match.span() for match in _CLAUSE.finditer(scanned_text) if _HAS_TEXT.search(match[0])
             ),
             is_paragraph_end=span.is_paragraph_end,
+            original_text=sentence_texts[index],
         )
         token_start = bisect_left(token_starts, span.start)
         token_end = bisect_left(token_starts, span.end, lo=token_start)
