@@ -1,7 +1,7 @@
 # [TICKET-012] Skill：zh-l5-guard 語體定調與白名單守門員
 
 ## Status
-`pending`
+`done`
 
 ## Dependencies
 - Requires: #011 ✅
@@ -10,12 +10,12 @@
 撰寫 `skills/zh-l5-guard/SKILL.md`：改文前的互動式守門員 Skill。呼叫 scanner preflight、解析疑似術語清單，以單輪互動向作者確認語體（tech/social/essay）與每個疑似專有名詞的作用域（Global/Local/Reject），並透過 update-state 寫入白名單。這是防止 L1 誤傷領域術語的第一道防線，也是 wenqi-all Stage 1 的握手對象。
 
 ## Acceptance Criteria
-- [ ] SKILL.md 具備 agent skill 標準結構（名稱、觸發時機、執行步驟），可被 CLI coding agent（Claude Code/OpenCode/Codex CLI）載入執行。
-- [ ] 流程依 §6.1：檔案模式 `python3 engine/ast_scanner.py --mode preflight --file <path>`；對話模式 `--stdin`；解析 L5_PREFLIGHT JSON。
-- [ ] `suspect_terms_for_review` 非空或首次執行時，發起單輪互動：確認語體；每個疑似詞提供 [G] 全域永久豁免、[L] 僅限本文/本專案、[X] 非專有名詞三選項。
-- [ ] [G] 呼叫 `--mode update-state --add-global-whitelist TERM:POS`；[L] 有檔案時 `--add-local-whitelist`，無檔案時以 `--ephemeral-whitelist` 傳入後續 CLI；[X] 不豁免。
-- [ ] 互動文案向作者說明每個疑似詞的 reason 與 sample_sentence，以及語體推測依據；作者未確認前不得進入改寫。
-- [ ] 包含 Few-Shot 互動範例（技術文含「局部性」未登錄詞的確認對話）。
+- [x] SKILL.md 具備 agent skill 標準結構（名稱、觸發時機、執行步驟），可被 CLI coding agent（Claude Code/OpenCode/Codex CLI）載入執行。
+- [x] 流程依 §6.1：檔案模式 `python3 engine/ast_scanner.py --mode preflight --file <path>`；對話模式 `--stdin`；解析 L5_PREFLIGHT JSON。
+- [x] `suspect_terms_for_review` 非空或首次執行時，發起單輪互動：確認語體；每個疑似詞提供 [G] 全域永久豁免、[L] 僅限本文/本專案、[X] 非專有名詞三選項。
+- [x] [G] 呼叫 `--mode update-state --add-global-whitelist TERM:POS`；[L] 有檔案時 `--add-local-whitelist`，無檔案時以 `--ephemeral-whitelist` 傳入後續 CLI；[X] 不豁免。
+- [x] 互動文案向作者說明每個疑似詞的 reason 與 sample_sentence，以及語體推測依據；作者未確認前不得進入改寫。
+- [x] 包含 Few-Shot 互動範例（技術文含「局部性」未登錄詞的確認對話）。
 
 ## Design Reference
 - `zh_polish_skill_spec_v2.md` §6.1（guard 執行步驟）、§3.1（L5 守門員優先）、§4.2 模式一（preflight payload）、§7（CLI）。
@@ -47,3 +47,7 @@
   - Dogfood 3（Repo 外獨立 `--file`）：確認 `--add-local-whitelist` 依預期拒寫並退回 `--ephemeral-whitelist`，無 `workspaces/` 產生且 L1 `lint` 行為一致。
   - 全套回歸 `.venv/bin/python -m pytest -q` 共 `820 passed, 1 xfailed`（既有的 `#016` R-33），未引入回歸。
 - 備註：後續若需讓 Git Repo 檔案的確認語體跨對話持久化，可另開引擎 follow-up ticket 擴充 `--mode update-state` 寫入 `document.profile`；此外 `SKILL.md` 於外部 CLI harness（Claude Code / OpenCode / Codex CLI）實機自動探索與跨技能串接留待 `#015` E2E dogfooding 實測。
+
+### 2026-11-22（合併驗收）
+
+- [PR #19](https://github.com/savourylie/wenqi/pull/19) 已合併至 `main`（合併提交 `e030914`），依前述 dogfood 與 `820 passed, 1 xfailed` 驗證結果標記為 `done`，並同步更新 `#014` 前置標記與 `INDEX.md`。
