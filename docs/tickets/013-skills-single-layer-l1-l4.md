@@ -1,10 +1,10 @@
 # [TICKET-013] Skills：zh-l1～zh-l4 單層正交技能（含雙版本 Diff 規範）
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #011
+- Requires: #011 ✅
 
 ## Description
 撰寫四個單層 Skills：`skills/zh-l1-vitality/SKILL.md`、`skills/zh-l2-branching/SKILL.md`、`skills/zh-l3-logic/SKILL.md`、`skills/zh-l4-cadence/SKILL.md`。每個 Skill 只呼叫對應 `--layer` 的 lint，並嚴格遵守正交隔離約束——即使句中同時存在其他層級病灶也絕不越層修改，讓作者能精確觀察單一層級規則的獨立效果。改寫輸出一律採 §6.4 雙版本 Diff（微調版 A／竹節重構版 B），並受 must_keep_content_words 與 frozen 詞保護。
