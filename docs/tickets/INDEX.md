@@ -9,10 +9,10 @@
 
 | Status | Count |
 | --- | --- |
-| ✅ Done | 7 |
+| ✅ Done | 10 |
 | 🔧 In Progress | 0 |
 | 📋 Pending | 2 |
-| 🚫 Blocked | 7 |
+| 🚫 Blocked | 4 |
 | ⏸️ Deferred | 0 |
 
 ## Phase 1 — 基礎建設與 L0/L5（Milestone 1）
@@ -30,11 +30,11 @@
 
 | # | Ticket | Status | Depends On | Notes |
 | --- | --- | --- | --- | --- |
-| 007 | [L1 規則引擎：詞性與語態重心](./007-l1-vitality-rules.md) | `blocked` | #006 | 可與 008–010 並行 |
-| 008 | [L2 規則引擎：修飾與包孕結構](./008-l2-branching-rules.md) | `blocked` | #006 | 可與 007/009/010 並行 |
+| 007 | [L1 規則引擎：詞性與語態重心](./007-l1-vitality-rules.md) | `done` | #006 ✅ | 合併驗收 323 項通過 · [PR #8](https://github.com/savourylie/wenqi/pull/8) |
+| 008 | [L2 規則引擎：修飾與包孕結構](./008-l2-branching-rules.md) | `done` | #006 ✅ | 394 項通過 · 3 項預期失敗 · [PR #9](https://github.com/savourylie/wenqi/pull/9) |
 | 009 | [L3 規則引擎：邏輯與銜接機制](./009-l3-logic-rules.md) | `done` | #006 ✅ | L3 回歸 137 項通過 · 盲測 20/20 · [PR #12](https://github.com/savourylie/wenqi/pull/12) |
-| 010 | [L4 規則引擎：篇章呼吸與音律節奏](./010-l4-cadence-rules.md) | `pending` | #006 ✅ | 可與 007–009 並行 |
-| 011 | **[TEST: Checkpoint 1 — Golden Test Suite 全層整合驗證](./011-test-checkpoint-1-golden-suite.md)** | `blocked` | #007, #008, #009 ✅, #010 | Gate: Milestone 2 引擎完成；Skills 開發等待此關卡 |
+| 010 | [L4 規則引擎：篇章呼吸與音律節奏](./010-l4-cadence-rules.md) | `done` | #006 ✅ | 809 項通過 · 外部題庫 64/64 · [PR #14](https://github.com/savourylie/wenqi/pull/14) |
+| 011 | **[TEST: Checkpoint 1 — Golden Test Suite 全層整合驗證](./011-test-checkpoint-1-golden-suite.md)** | `pending` | #007 ✅, #008 ✅, #009 ✅, #010 ✅ | Milestone 2 全層驗收關卡，通過後啟動 Skills 開發 |
 
 ## Phase 3 — 六個 Agent Skills（Milestone 3）
 

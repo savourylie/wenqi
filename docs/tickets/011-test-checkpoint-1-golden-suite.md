@@ -1,10 +1,10 @@
 # [TICKET-011] TEST: Checkpoint 1 — Golden Test Suite 全層整合驗證
 
 ## Status
-`blocked`
+`pending`
 
 ## Dependencies
-- Requires: #007, #008, #009 ✅, #010
+- Requires: #007 ✅, #008 ✅, #009 ✅, #010 ✅
 
 ## Description
 四層規則各自通過單元測試後，需要一個跨層整合關卡：以 §8.1 的四個 Golden Case 透過完整 CLI（`--mode lint --layer ALL`）端到端驗證多層共現偵測、白名單保護、L0 消歧義與 profile 閾值的協同行為。這是 Milestone 2 的完成定義；六個 Skills（Milestone 3）依賴此關卡通過，確保 SKILL.md 的 Few-Shot 與改寫指令建立在已驗證的診斷輸出上。
@@ -34,3 +34,12 @@
 ## Testing
 - 新增 `tests/test_golden_suite.py`（或等效），四個 Case 各一組斷言，執行測試指令全數通過。
 - 結果記錄於本 ticket 完成時的 evidence（測試輸出摘要）。
+
+## As-Built Notes
+
+### 2026-11-21
+
+- 四例在 `tests/test_ast_scanner.py` 各自走實際 CLI。每次先對同一份 stdin 跑 L5，再按案例指定的語體和暫用白名單跑 `ALL`。Case 1 採 `tech`，Case 2–4 採 `essay`，Case 2 另以 `tech` 驗證長前飾豁免。
+- 採作者選定的 A。固定票面命中、原文位置與豁免，所有診斷都檢查欄位並納入摘要計數。Case 3 依 #007 的裁決驗事件名物化，Case 4 的「可讀性」交給 L1 診斷。
+- `python -m pytest -q tests/test_ast_scanner.py -k golden_suite` 共 5 項通過，包含 Case 2 的語體對照。
+- 全套 pytest 回歸共 814 項通過，#016 的 R-33 為 1 項既有預期失敗。逐份為舊測項補跑 L5，涵蓋 16 次 CLI 掃描與 275 次 Python 掃描。

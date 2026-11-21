@@ -1,10 +1,10 @@
 # [TICKET-008] L2 規則引擎：修飾與包孕結構 (l2_branching.py)
 
 ## Status
-`blocked`
+`done`
 
 ## Dependencies
-- Requires: #006
+- Requires: #006 ✅
 
 ## Description
 實作 `engine/rules/l2_branching.py`：依 §5.2 第二層規則矩陣偵測左分支定語過載（前飾關閉句）、「的」字連環套、長狀語黏著與「成功地」重言。核心是 DDM（依存距離最小化）：讓核心名詞提早落地、長修飾改後飾流水展開。閾值隨語體 profile 動態調整，且完全依賴 L0 的 DE 消歧義結果。
