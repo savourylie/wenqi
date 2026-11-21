@@ -10,8 +10,8 @@
 | Status | Count |
 | --- | --- |
 | ✅ Done | 12 |
-| 🔧 In Progress | 0 |
-| 📋 Pending | 4 |
+| 🔧 In Progress | 1 |
+| 📋 Pending | 3 |
 | 🚫 Blocked | 2 |
 | ⏸️ Deferred | 0 |
 
@@ -56,7 +56,7 @@
 | --- | --- | --- | --- | --- |
 | 016 | [L0 消歧修正：名詞性時間詞組後的「的」](./016-l0-nominal-time-de-role.md) | `pending` | #004 ✅ | R-33，涉及 #007、#008 |
 | 017 | [L2 左錨修正：名物化主語誤判為謂語](./017-l2-left-anchor-nominal-subject.md) | `done` | #008 ✅ | N02 三組合併驗收通過 · [PR #16](https://github.com/savourylie/wenqi/pull/16) |
-| 018 | [L0 補語判定修正：程度副詞後的 vn](./018-l0-complement-degree-vn.md) | `pending` | #004 ✅ | N03 補語錯字漏報，盲測跟進 |
+| 018 | [L0 補語判定修正：程度副詞後的 vn](./018-l0-complement-degree-vn.md) | `in-progress` | #004 ✅ | N03 正反對照通過，送審 |
 
 ## Status Key
 
