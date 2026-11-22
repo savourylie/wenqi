@@ -1,6 +1,6 @@
 # Ticket Index
 
-> **Last updated**: 2026-11-21
+> **Last updated**: 2026-11-22
 >
 > Source: `zh_polish_skill_spec_v2.md`（wenqi v2.0.0 技術與理論規格）．Operation: Create．
 > 分階段依規格 §8.2 路線圖：Milestone 1 基礎建設與 L0/L5 → Milestone 2 四層規則引擎 → Milestone 3 六個 Skills → Milestone 4 E2E Dogfooding。
@@ -9,9 +9,9 @@
 
 | Status | Count |
 | --- | --- |
-| ✅ Done | 13 |
+| ✅ Done | 14 |
 | 🔧 In Progress | 0 |
-| 📋 Pending | 3 |
+| 📋 Pending | 2 |
 | 🚫 Blocked | 2 |
 | ⏸️ Deferred | 0 |
 
@@ -40,9 +40,9 @@
 
 | # | Ticket | Status | Depends On | Notes |
 | --- | --- | --- | --- | --- |
-| 012 | [Skill：zh-l5-guard 守門員](./012-skill-zh-l5-guard.md) | `pending` | #011 ✅ | |
+| 012 | [Skill：zh-l5-guard 守門員](./012-skill-zh-l5-guard.md) | `done` | #011 ✅ | 三模式 dogfood＋820 項回歸通過 · [PR #19](https://github.com/savourylie/wenqi/pull/19) |
 | 013 | [Skills：zh-l1～zh-l4 單層正交技能](./013-skills-single-layer-l1-l4.md) | `pending` | #011 ✅ | 四份 SKILL.md 共用正交隔離與 Diff 規範 |
-| 014 | [Skill：wenqi-all 總調度器](./014-skill-wenqi-all.md) | `blocked` | #012, #013 | |
+| 014 | [Skill：wenqi-all 總調度器](./014-skill-wenqi-all.md) | `blocked` | #012 ✅, #013 | |
 
 ## Phase 4 — 端到端驗收（Milestone 4）
 

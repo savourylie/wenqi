@@ -4,7 +4,7 @@
 `blocked`
 
 ## Dependencies
-- Requires: #012, #013
+- Requires: #012 ✅, #013
 
 ## Description
 撰寫 `skills/wenqi-all/SKILL.md`：一鍵全修總調度。三階段流程——Stage 1 自動呼叫 zh-l5-guard 完成語體與白名單握手；Stage 2 執行 `--mode lint --layer ALL` 全層掃描；Stage 3 對同句多層 Issue 以「由外而內」優先序在單次推論中折疊重構（Folded AST Rewrite），避免逐層改寫互相打架。輸出沿用雙版本 Diff 與最小手術防呆。
