@@ -32,3 +32,18 @@
 ## Testing
 - 人工 dogfood 每層：以含多層病灶的句子（如 Golden Case 1）分別跑四層 Skill，驗證只改該層 span、其他層病灶原樣保留。
 - 驗證 Diff 輸出格式與 §6.4 範例一致；must_keep 詞在 A/B 兩版皆保留。
+
+## As-Built Notes
+
+### 2026-11-22
+
+- 依已確認決策建立四份單層正交技能：`skills/zh-l1-vitality/SKILL.md`、`skills/zh-l2-branching/SKILL.md`、`skills/zh-l3-logic/SKILL.md`、`skills/zh-l4-cadence/SKILL.md`，維持純 `SKILL.md` 範圍（符合規格 §3.2 拓撲，不更動 `engine/`）。
+- **L5 預檢前置與握手銜接（Q1 選項 A）**：對齊 `AGENTS.md` 與 `#012`（`zh-l5-guard`）握手契約，各單層 Skill 執行 `--mode lint --layer <L1|L2|L3|L4>` 前先檢查同對話是否已對相同 `target_id`＋`content_hash` 完成 L5 握手；已握手則直接帶入 `--profile <tech|social|essay>`（與必要時的 `--ephemeral-whitelist`），未握手則先跑 `--mode preflight` 完成單輪確認後再執行單層 `lint`。同時沿用 `WENQI_ROOT`／`WENQI_PYTHON`（優先 `.venv/bin/python`）解析與只讀 `stdout` JSON 規範。
+- **自包含內聯共用規範區塊（Q2 選項 A）**：四份 `SKILL.md` 以 `<!-- SHARED_SPEC_START -->` 至 `<!-- SHARED_SPEC_END -->` 內聯完全一字不差的共用規範文字（共 4,457 字元，SHA-256 前綴 `9447cb0234bc`），涵蓋步驟 0～1、嚴格正交隔離約束、最小手術防呆（`must_keep_content_words`、`frozen_whitelist_hits`、零 AI 腔增飾、零命中空狀態）、§6.4 雙版本 Diff 固定輸出模板與作者最終裁決權。
+- **單層 A/B 改寫邊界與引擎實作欄位對齊（Q3 選項 A）**：
+  - 【版本 A：微調版】僅針對本層 `issues` 的 `span` 依 `instruction` 做最小字面手術；【版本 B：竹節重構版】在僅限本層命中 `span` 及其直接依存範圍內強化動詞張力／後飾展開／意合銜接／竹節韻律；同句他層病灶（含單層模式下未進 `issues` 的 L0 `DE_COMP` 補語錯字如 Golden Case 2「跑的很快」）在 A/B 兩版皆 100% 原字保留。
+  - 各層規則表與 Few-Shot 案例（L1 六類、L2 三類、L3 三類、L4 四類，直接節錄規格 Part I §2.1.2～§2.4.2）完整對齊 `#007`～`#010` 引擎實際輸出：含 L1 `severity: "info"`（弱動詞接英文動作）、L3 `L3_CAUSAL_MALFORMED`（主語湮沒 `priority: 0` 與 `L3_SHORT_CAUSAL_DROP` 停用開關）、L4 `suggested_breakpoint` 可選斷點與 `L4_REDUNDANT_PRONOUNS` 同指確認提示，以及同句必留詞衝突時 Scanner 覆寫為「保留…的原字，可調整…的語序」的保護指令。
+- **驗收與 dogfood 驗證**（於隔離臨時 `HOME` 依 `AGENTS.md` 先 L5 `preflight` 再單層 `lint`）：
+  - 自動化結構與契約檢查：四份 `SKILL.md` YAML frontmatter、CLI 簽章、Few-Shot 類別數（6/3/3/4）與共用規範區塊 100% 一致性檢查通過。
+  - 四層單層正交 dogfood：對 Golden Cases 1～4 先跑 `preflight` 再分別跑 `--layer L1`、`L2`、`L3`、`L4`，驗證每層僅回傳該層 `issues`、雙版本 Diff 只改該層 `span` 而 100% 保留他層病灶與全數 `must_keep_content_words`／`frozen_whitelist_hits`（如 `高可用性`），且 `--file` 原稿 SHA-256（`2daa8765a61a`）零變動。
+  - 全套回歸測試 `.venv/bin/python -m pytest -q` 通過（820 passed, 1 xfailed 既有 `#016` R-33），無引入回歸。
